@@ -1,4 +1,5 @@
-# Dgarnier Plasma
+# Darren's  Plasma Homebrew Tap
+
 
 ## How do I install these formulae?
 
