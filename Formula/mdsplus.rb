@@ -2,19 +2,25 @@ class Mdsplus < Formula
   desc "The MDSplus data management system"
   homepage "https://mdsplus.org/"
   license "MIT"
-  head "https://github.com/MDSplus/mdsplus.git", branch: "cmake" 
+  #url "https://github.com/MDSplus/mdsplus"
+  #url "https://github.com/MDSplus/mdsplus/tree/1d03558.git", :using 
 
-  depends_on "python@3.13"
+  #url "https://github.com/MDSplus/mdsplus/archive/1d03558.zip"
+  #sha256 "244139c73373adb076aa50239282e32c46ef4e04af3bdfd44943546c907f370e"
+  head "https://github.com/MDSplus/mdsplus.git", branch: "cmake"
+  
   depends_on "pkg-config" => :build
   depends_on "cmake" => [:build, :test]
   depends_on "ninja" => [:build, :test]
   depends_on "bison" => [:build]
   depends_on "gnu-tar" => :build
 
+  uses_from_macos "python" => :build
   uses_from_macos "libffi"
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
   uses_from_macos "libiconv"
+  uses_from_macos "liblzma"
 
   depends_on "readline"
   depends_on "openblas"
@@ -27,6 +33,8 @@ class Mdsplus < Formula
   #   url ""
   #   sha256 ""
   # end
+
+  keg_only "its the normal way to have mdsplus work"
 
   def install
 
@@ -50,7 +58,7 @@ class Mdsplus < Formula
 
     system "cmake", *args
     system "cmake", "--build", "workspace/build", "--", "-j#{ENV.make_jobs}"
-    system "cmake", "--install", "workspace/build", "--prefix", prefix
+    system "cmake", "--install", "workspace/build", "--prefix", "#{prefix}"
   end
 
   test do
