@@ -7,7 +7,7 @@ class Mdsplus < Formula
 
   #url "https://github.com/MDSplus/mdsplus/archive/1d03558.zip"
   #sha256 "244139c73373adb076aa50239282e32c46ef4e04af3bdfd44943546c907f370e"
-  head "https://github.com/MDSplus/mdsplus.git", branch: "cmake"
+  head "https://github.com/MDSplus/mdsplus.git", branch: "alpha"
   
   depends_on "pkg-config" => :build
   depends_on "cmake" => [:build, :test]
@@ -27,6 +27,7 @@ class Mdsplus < Formula
   depends_on "freetds"
   depends_on "libx11"
   depends_on "openmotif"
+  depends_on "hdf5@1.14"
 
   # Additional dependency
   # resource "" do
@@ -52,6 +53,9 @@ class Mdsplus < Formula
       -B workspace/build
       -G Ninja
       -DMotif_X11_INCLUDE_DIR=#{Formula["libx11"].opt_include}
+      -DENABLE_HDF5=ON
+      -DHDF5_INCLUDE_DIR=#{Formula["hdf5"].opt_include}
+      -DHDF5_LIBRARY_DIR=#{Formula["hdf5"].opt_lib}
       -DPLATFORM=macosx
       -DCMAKE_INSTALL_PREFIX=#{prefix}
     ]
