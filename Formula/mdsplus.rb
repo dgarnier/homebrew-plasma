@@ -1,4 +1,5 @@
 class Mdsplus < Formula
+  include Language::Python::Virtualenv
   desc "The MDSplus data management system"
   homepage "https://mdsplus.org/"
   license "MIT"
@@ -15,13 +16,14 @@ class Mdsplus < Formula
   depends_on "bison" => [:build]
   depends_on "gnu-tar" => :build
 
-  uses_from_macos "python" => :build
+  #uses_from_macos "python" => :build
   uses_from_macos "libffi"
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
   uses_from_macos "libiconv"
   uses_from_macos "liblzma"
 
+  depends_on "python@3.13" => :build
   depends_on "readline"
   depends_on "openblas"
   depends_on "freetds"
@@ -44,10 +46,12 @@ class Mdsplus < Formula
               '${CMAKE_COMMAND} -E tar -czf',
               '/opt/homebrew/bin/gtar -czf'
 
+    inreplace "setup.sh", '/usr/local/mdsplus', opt_prefix
+    inreplace "setup.csh", '/usr/local/mdsplus', opt_prefix
+
     # Prefer Homebrew-provided X11/Motif headers/libs so the build does not pick
     # up macOS SDK framework headers (e.g. Tk.framework) which can provide
-    # incompatible X11/Xlib.h. Also disable CMake framework searching so
-    # frameworks under the SDK are not added to the include path.
+    # incompatible X11/Xlib.h. d
     args = std_cmake_args + %W[
       -S .
       -B workspace/build
@@ -63,6 +67,29 @@ class Mdsplus < Formula
     system "cmake", *args
     system "cmake", "--build", "workspace/build", "--", "-j#{ENV.make_jobs}"
     system "cmake", "--install", "workspace/build", "--prefix", "#{prefix}"
+
+
+    # install didn't install python tests.. so comment them out 
+    inreplace prefix/"python/MDSplus/pyproject.toml", "'MDSplus.tests'", "#'MDSplus.tests'"
+    build_venv = virtualenv_create(buildpath/"venv", "python3.13")
+    build_venv.pip_install "wheel"
+    ENV.prepend_path "PATH", buildpath/"venv/bin"
+    system "cd", prefix/"python", "&&", "python", "-m", "pip", "wheel", "--no-deps", "./MDSplus"
+    system "rm", "-r", buildpath/"venv"
+
+  end
+
+  def caveats
+    <<~EOS
+      MDSplus installed as a keg-only package here:
+        #{opt_prefix}
+
+      It is recommended to add the following to your .zshrc:
+
+      if [ -f #{opt_prefix}/setup.sh ]; then
+        source #{opt_prefix}/setup.sh
+      fi
+    EOS
   end
 
   test do
