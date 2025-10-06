@@ -184,6 +184,7 @@ class Mdsplus < Formula
     puts output
     #assert_equal "OK", output.lines.last.chomp
     assert_match "OK", output.lines[-2].chomp
+
     output = shell_output('python3 -c "from MDSplus.tests import segment_case as t; t.Tests.runTests()" 2>&1')
     puts output
     #assert_equal "OK", output.lines.last.chomp
@@ -191,6 +192,11 @@ class Mdsplus < Formula
     output = shell_output('python3 -c "from MDSplus.tests import dcl_case as t; t.Tests.runTests()" 2>&1')
     puts output
     assert_equal "OK", output.lines.last.chomp
+    
+    # this might work if the above stuff worked.
+    #output = shell_output('python3 -c "from MDSplus.tests import thread_case as t; t.Tests.runTests()" 2>&1')
+    #puts output
+
     
   end
 end
