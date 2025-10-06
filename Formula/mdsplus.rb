@@ -207,6 +207,10 @@ class Mdsplus < Formula
     #puts output
     assert_match "OK", output.lines.last.chomp
     
+    output = shell_output('python3 -c "from MDSplus.tests import connection_case as t; t.Tests.runTests()" 2>test_stderr && cat test_stderr')
+    puts output
+    #assert_match "OK", output.lines.last.chomp
+
     # this is doing a segmentation fault.
     output = shell_output('python3 -c "from MDSplus.tests import thread_case as t; t.Tests.runTests()" 2>test_stderr && cat test_stderr')
     puts output
