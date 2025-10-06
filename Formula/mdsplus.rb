@@ -147,6 +147,8 @@ class Mdsplus < Formula
     # setup python
     test_venv = virtualenv_create(testpath/"venv", "python3.13")
     ENV.prepend_path "PATH", testpath/"venv/bin"
+    # get actual python library with full path
+    test_venv.pip_install "find_libpython"
     # image library
     test_venv.pip_install "pillow" 
     wheel = Dir[opt_prefix/"python/*.whl"].first
@@ -158,6 +160,17 @@ class Mdsplus < Formula
     shell_output("source #{opt_prefix}/setup.sh && printenv").each_line do |line|
       key, value = line.chomp.split('=', 2)
       ENV[key] = value if key && !key.empty?
+    end
+
+    # find the python libray path associated with the python in the environment
+    # this is needed for spawned servers in the tests
+    ENV['PyLib'] = shell_output('find_libpython')
+    
+    # also pass on the python path because it won't get the virtualenv when starting the server
+    # the way the test does it
+    pypath = shell_output('python -c "import sys; print(sys.path)"').chomp
+    eval(pypath).each do |path| 
+      ENV.prepend_path "PYTHONPATH", path
     end
 
     # get python tests resource directory
