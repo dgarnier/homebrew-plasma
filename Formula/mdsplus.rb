@@ -3,10 +3,10 @@ class Mdsplus < Formula
   desc "The MDSplus data management system"
   homepage "https://mdsplus.org/"
   license "MIT"
-  #license_files ["MDSplus-license.txt", "MDSplus-license.rtf"]
-
-  url "https://github.com/MDSplus/mdsplus.git", revision: "f11259dec7874a88b2ab0af4456b393923fdf87e"
-  version 'alpha_release-7-153-7'
+  
+  url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-155-1.tar.gz"
+  sha256 "a143dcfa4c197434abeda3bd4617e19a7ca8c1dbdebae848e5d172166906830f"
+  version "alpha_release-7-155-1"
 
   head "https://github.com/MDSplus/mdsplus.git", branch: "alpha"
 
@@ -31,6 +31,8 @@ class Mdsplus < Formula
   #uses_from_macos "xz"  # liblzma somehow this isn't getting used
   
   depends_on "python@3.13" => :build
+  depends_on "numpy" => :build
+  
   depends_on "readline"
   depends_on "xz"
   # depends_on "openblas"
@@ -38,14 +40,17 @@ class Mdsplus < Formula
   depends_on "libx11"
   depends_on "openmotif"
   depends_on "hdf5@1.14"
-
-  # Additional dependency
-  # resource "" do
-  #   url ""
-  #   sha256 ""
-  # end
+  depends_on "openjdk"
 
   keg_only "its the normal way to have mdsplus work"
+
+  livecheck do
+    url "https://github.com/mdsplus/mdsplus" # The URL to the GitHub repository
+    regex(/(alpha|stable)_release-\d+-\d+-\d+/)
+    strategy :github_latest do |json, regex|
+      json["name"][regex]
+    end
+  end
 
   def install
 
@@ -59,14 +64,10 @@ class Mdsplus < Formula
       -DMotif_X11_INCLUDE_DIR=#{Formula["libx11"].opt_include}
       -DPLATFORM=macosx
       -DCMAKE_INSTALL_PREFIX=#{prefix}
+      -DRELEASE_TAG=#{version.to_s}
     ]
 
-    #       -DENABLE_HDF5=ON
-    #  -DHDF5_INCLUDE_DIR=#{Formula["hdf5"].opt_include}
-    #  -DHDF5_LIBRARY_DIR=#{Formula["hdf5"].opt_lib}
-
     ENV["HDF5_DIR"] = Formula["hdf5"].opt_prefix
-
 
     # Ensure mitdevices uses gtar (from gnu-tar) instead of "cmake -E tar"
     inreplace "mitdevices/CMakeLists.txt",
@@ -80,6 +81,7 @@ class Mdsplus < Formula
       args = args + %W[
         -DBUILD_TESTING=ON
       ]
+
     else
       inreplace "python/MDSplus/pyproject.toml", "'MDSplus.tests'", "# 'MDSplus.tests'"
     end
@@ -98,11 +100,16 @@ class Mdsplus < Formula
         "tdi/treeshr/TreeShrHook.py.example",
       ], '/usr/local/mdsplus', opt_prefix
 
+    build_venv = virtualenv_create(buildpath/"workspace/venv", "python3.13")
+    ENV["VIRTUAL_ENV"]=buildpath/"workspace/venv"
+    args = args + %W[
+      -DPython_FIND_VIRTUALENV=FIRST
+    ]
 
     system "cmake", *args
     system "cmake", "--build", "workspace/build", "--", "-j#{ENV.make_jobs}"
+    system "ctest", "--test-dir", "workspace/build", "-j#{ENV.make_jobs}", "-E", "MdsTreeNodeTest" 
     system "cmake", "--install", "workspace/build", "--prefix", "#{prefix}"
-
 
     # prepend #!/bin/sh to these files so the get the right permissions
     # after homebrew "cleans up"
@@ -121,9 +128,9 @@ class Mdsplus < Formula
     end
     
     # build python wheel 
-    build_venv = virtualenv_create(buildpath/"venv", "python3.13")
-    build_venv.pip_install "wheel"
-    ENV.prepend_path "PATH", buildpath/"venv/bin"
+    # build_venv = virtualenv_create(buildpath/"venv", "python3.13")
+    # build_venv.pip_install "wheel"
+    # ENV.prepend_path "PATH", buildpath/"venv/bin"
     system "python3", "-m", "pip", "wheel", "--no-deps", 
       "-w", prefix/"python", prefix/"python/MDSplus"
   end
