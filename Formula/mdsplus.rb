@@ -196,26 +196,29 @@ class Mdsplus < Formula
       ENV.prepend_path "PYTHONPATH", path
     end
 
-    # get python tests resource directory
-    test_dir = shell_output('python -c "from importlib.resources import files; print(files(\"MDSplus.tests\"))"').chomp
-    #puts test_dir
-
-    # add test devices and trees
-    ENV.prepend_path "MDS_PYDEVICE_PATH", test_dir+"/devices"
     # can't use ENV prepend_*path because MDSplus uses semicolons instead of colons.. sigh
-    ENV['default_tree_path']=(testpath/"trees").to_s+";"+test_dir+"/trees;"+(opt_prefix/"trees").to_s
+    ENV['default_tree_path']=(testpath/"trees").to_s+";"+(opt_prefix/"trees").to_s
     ENV['main_path']=opt_prefix/"trees"
     ENV['subtree_path']=opt_prefix/"trees/subtree"
 
     # this tests that tdi is setup and can see its home directory
-    output = shell_output('echo helloworld() | tditest')
-    assert_equal "Hello world", output.chomp
+    output = shell_output('echo "helloworld()" | tditest')
+    assert_match "Hello world", output.lines[-2].chomp
 
-    output = shell_output('python3 -c "from MDSplus._version import release_tag; print(release_tag)"')
+    output = pipe_output('python3', "from MDSplus._version import release_tag; print(release_tag)")
     assert_equal "#{version.to_s}", output.chomp
+    ohai "Python loaded MDSplus version: #{output.chomp}"
 
-    output = shell_output('python3 -c "import MDSplus.tests; print(dir(MDSplus.tests)[0])')
-    if 'TestSuite' in output.chomp
+    output = pipe_output('python3', "exec(\"try: import MDSplus.test; print('OK')\\nexcept: print('FAIL')\")")
+    if output.include? "OK"
+      # get python tests resource directory
+      ohai "Running python tests suite which was enabled by --with-pytests"
+      test_dir = shell_output('python -c "from importlib.resources import files; print(files(\"MDSplus.tests\"))"').chomp
+      # add test devices and trees
+      ENV.prepend_path "MDS_PYDEVICE_PATH", test_dir+"/devices"
+      #puts test_dir at start of default tree path (with semicolons!)
+      ENV['default_tree_path'] = test_dir+"/trees;" + ENV['default_tree_path']
+
       # these tests would have been included if build.with? "tests" was true     
       output = shell_output('python3 -c "from MDSplus.tests import exception_case as t; t.Tests.runTests()" 2>&1')
       assert_match "OK (skipped=1)", output.lines.last.chomp
@@ -245,8 +248,8 @@ class Mdsplus < Formula
       puts output
       puts shell_output('cat test_stderr')
       # assert_match "OK", output.lines.last.chomp
+    else
+      opoo "Extensive python test suite was not enabled by --with-pytests"
     end
-
-
   end
 end
