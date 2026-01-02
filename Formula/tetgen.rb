@@ -2,7 +2,7 @@ class Tetgen < Formula
   desc "Quality Tetrahedral Mesh Generator and a 3D Delaunay Triangulator"
   homepage "http://tetgen.org/"
   url "https://github.com/TetGen/TetGen/archive/refs/tags/v1.5.1.zip"
-  version "v1.5.1"
+  version "1.5.1"
   license "AGPLv3"
   sha256 "11075fb5d3fcfd37788a66d58e81e38c43ef94d59de6fc5b66bd414c2c1cd9f0"
   
