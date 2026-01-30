@@ -4,9 +4,9 @@ class Mdsplus < Formula
   homepage "https://mdsplus.org/"
   license "MIT"
   
-  url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-155-1.tar.gz"
-  sha256 "a143dcfa4c197434abeda3bd4617e19a7ca8c1dbdebae848e5d172166906830f"
-  version "alpha_release-7-155-1"
+  url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-157-2.tar.gz"
+  sha256 "ba5dd9644aa7b67cef8b1e8105982e80b81be55954ae3d310c0fb4dd2fb517b6"
+  version "alpha_release-7-157-2"
 
   head "https://github.com/MDSplus/mdsplus.git", branch: "alpha"
 
@@ -18,7 +18,8 @@ class Mdsplus < Formula
   depends_on "ninja" => [:build, :test]
   depends_on "bison" => [:build]
   depends_on "gnu-tar" => :build
-  depends_on "doxygen" => :build
+  #depends_on "doxygen" => :build
+  depends_on "maven" => :build
 
   #uses_from_macos "python" => :build
   uses_from_macos "libffi"
@@ -40,7 +41,7 @@ class Mdsplus < Formula
   depends_on "freetds"
   depends_on "libx11"
   depends_on "openmotif"
-  depends_on "hdf5@1.14"
+  depends_on "hdf5@1.14" => :recommended
   depends_on "openjdk"
 
   keg_only "its the normal way to have mdsplus work"
@@ -51,6 +52,14 @@ class Mdsplus < Formula
     strategy :github_latest do |json, regex|
       json["name"][regex]
     end
+  end
+
+  stable do
+    patch :DATA
+  end
+
+  head do
+    patch :DATA
   end
 
   def install
@@ -69,9 +78,14 @@ class Mdsplus < Formula
       -DCMAKE_BUILD_TYPE=Release
     ]
 
-    ENV["HDF5_DIR"] = Formula["hdf5"].opt_prefix
+    # If the recommended HDF5 is not specifically disabled
+    # this will allow the keg version to be found
+    if build.with? "hdf5"
+      ENV["HDF5_DIR"] = Formula["hdf5"].opt_prefix
+    end
 
     # Ensure mitdevices uses gtar (from gnu-tar) instead of "cmake -E tar"
+    # which is sadly broken on macOS
     inreplace "mitdevices/CMakeLists.txt",
               '${CMAKE_COMMAND} -E tar -czf',
               '/opt/homebrew/bin/gtar -czf'
@@ -83,7 +97,7 @@ class Mdsplus < Formula
       args = args + %W[
         -DBUILD_TESTING=ON
       ]
-    else
+    else # its actually broken by default
       inreplace "python/MDSplus/pyproject.toml", "'MDSplus.tests'", "# 'MDSplus.tests'"
     end
     if build.with? "ctest"
@@ -91,8 +105,6 @@ class Mdsplus < Formula
         -DBUILD_TESTING=ON
       ]
     end
-
-
 
     inreplace [
         "setup.sh", "setup.csh", 
@@ -253,3 +265,20 @@ class Mdsplus < Formula
     end
   end
 end
+__END__
+diff --git a/java/CMakeLists.txt b/java/CMakeLists.txt
+index 05290805b..bd6cd925a 100644
+--- a/java/CMakeLists.txt
++++ b/java/CMakeLists.txt
+@@ -19,6 +19,10 @@ if(ENABLE_JAVA)
+     add_subdirectory(jdevices)
+     add_subdirectory(jtraverser2)
+ 
++    install(FILES ${JSCH_JAR}
++        DESTINATION java/classes
++    )
++
+     if(mvn_EXECUTABLE)
+ 
+         include(ProcessorCount)
+
