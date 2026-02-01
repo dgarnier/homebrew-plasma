@@ -41,7 +41,7 @@ class Mdsplus < Formula
   depends_on "freetds"
   depends_on "libx11"
   depends_on "openmotif"
-  depends_on "hdf5@1.14" => :recommended
+  depends_on "hdf5" => :recommended
   depends_on "openjdk"
 
   keg_only "its the normal way to have mdsplus work"
