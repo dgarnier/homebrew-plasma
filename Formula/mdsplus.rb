@@ -4,9 +4,9 @@ class Mdsplus < Formula
   homepage "https://mdsplus.org/"
   license "MIT"
   
-  url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-157-2.tar.gz"
-  sha256 "ba5dd9644aa7b67cef8b1e8105982e80b81be55954ae3d310c0fb4dd2fb517b6"
-  version "alpha_release-7-157-2"
+  url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-157-4.tar.gz"
+  sha256 "839f7ec5962e47ecaaee123172f4c25285bc7e8ccbc3df83b6bf962e2b2bf2aa"
+  version "alpha_release-7-157-4"
 
   head "https://github.com/MDSplus/mdsplus.git", branch: "alpha"
 
@@ -42,7 +42,7 @@ class Mdsplus < Formula
   depends_on "libx11"
   depends_on "openmotif"
   depends_on "hdf5" => :recommended
-  depends_on "openjdk@11"
+  depends_on "openjdk@21"
 
   keg_only "its the normal way to have mdsplus work"
 
@@ -137,12 +137,13 @@ class Mdsplus < Formula
 
     # prepend #!/bin/sh to these files so the get the right permissions
     # after homebrew "cleans up"
-    inreplace [ bin/"job_finish", bin/"job_functions", 
-                bin/"job_output", bin/"job_start",
-                bin/"mdstcl", bin/"synchronize_unix"
-              ] do |s|
-                s.sub!(/\A(?!#!)/, "#!/bin/sh\n")
-              end
+    # fixed after 7-157-3
+    #inreplace [ bin/"job_finish", bin/"job_functions", 
+    #            bin/"job_output", bin/"job_start",
+    #            bin/"mdstcl", bin/"synchronize_unix"
+    #          ] do |s|
+    #            s.sub!(/\A(?!#!)/, "#!/bin/sh\n")
+    #          end
 
     # add python tests in final install (though cmake would not include them)
     if build.with? "pytests"
