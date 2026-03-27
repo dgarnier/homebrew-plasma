@@ -4,9 +4,9 @@ class Mdsplus < Formula
   homepage "https://mdsplus.org/"
   license "MIT"
   
-  url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-158-0.tar.gz"
-  sha256 "5cf90bf8d8440c7ebd512a8c6452cb2f96d72360a85833f5d81661987536f7e0"
-  version "alpha_release-7-158-0"
+  url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-158-2.tar.gz"
+  sha256 "b6f7b358dbccedf7b51ce820ce415a9fa4e21d1054a13bf0dfb4eabdfa2d4645"
+  version "alpha_release-7-158-2"
 
   head "https://github.com/MDSplus/mdsplus.git", branch: "alpha"
 
