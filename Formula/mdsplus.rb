@@ -37,7 +37,6 @@ class Mdsplus < Formula
     depends_on "openblas"
     depends_on "libxml2"
     depends_on "zlib"
-    depends_on "libiconv"
   end
   
   depends_on "python@3.13" => :build
