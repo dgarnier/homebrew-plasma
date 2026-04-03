@@ -34,6 +34,8 @@ class Mdsplus < Formula
   end
 
   on_linux do
+    depends_on "gcc" :build
+    depends_on "gfortran" :build
     depends_on "openblas"
     depends_on "libxml2"
     depends_on "zlib"
