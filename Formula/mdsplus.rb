@@ -6,9 +6,9 @@ class Mdsplus < Formula
   
   url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-158-2.tar.gz"
   sha256 "b6f7b358dbccedf7b51ce820ce415a9fa4e21d1054a13bf0dfb4eabdfa2d4645"
+  # required as build wont work with release tag
   version "alpha_release-7-158-2"
-
-  head "https://github.com/MDSplus/mdsplus.git", branch: "alpha"
+  head "https://github.com/MDSplus/mdsplus.git", using: :git, branch: "alpha"
 
   option "with-ctest", "Build with full ctest suite."
   option "with-pytests", "Include python tests in build."
@@ -21,23 +21,29 @@ class Mdsplus < Formula
   #depends_on "doxygen" => :build
   depends_on "maven" => :build
 
-  #uses_from_macos "python" => :build
-  uses_from_macos "libffi"
-  uses_from_macos "libxml2"
-  uses_from_macos "zlib"
-  uses_from_macos "libiconv"
-  uses_from_macos "blas"  # use macos Accelerate framework
-  
-  # these dont seem to work, so replace with homebrew-provided ones
-  #uses_from_macos "readline"
-  #uses_from_macos "xz"  # liblzma somehow this isn't getting used
+  on_macos do
+    depends_on "gnu-tar" => :build  # non broken tar for cmake on macos
+    uses_from_macos "libffi"
+    uses_from_macos "libxml2"
+    uses_from_macos "zlib"
+    uses_from_macos "libiconv"
+    uses_from_macos "blas"  # use macos Accelerate framework
+    # these dont seem to work, so replace with homebrew-provided ones
+    #uses_from_macos "readline"
+    #uses_from_macos "xz"  # liblzma somehow this isn't getting used
+  end
+
+  on_linux do
+    depends_on "openblas"
+    depends_on "libxml2"
+    depends_on "zlib"
+    depends_on "libiconv"
+  end
   
   depends_on "python@3.13" => :build
   depends_on "numpy" => :build
-  
   depends_on "readline"
   depends_on "xz"
-  # depends_on "openblas"
   depends_on "freetds"
   depends_on "libx11"
   depends_on "openmotif"
@@ -64,19 +70,35 @@ class Mdsplus < Formula
 
   def install
 
-    # Prefer Homebrew-provided X11/Motif headers/libs so the build does not pick
-    # up macOS SDK framework headers (e.g. Tk.framework) which can provide
-    # incompatible X11/Xlib.h. d
     args = std_cmake_args + %W[
       -S .
       -B workspace/build
       -G Ninja
-      -DMotif_X11_INCLUDE_DIR=#{Formula["libx11"].opt_include}
-      -DPLATFORM=macosx
       -DCMAKE_INSTALL_PREFIX=#{prefix}
-      -DRELEASE_TAG=#{version.to_s}
-      -DCMAKE_BUILD_TYPE=Release
     ]
+
+    args = args + if OS.mac?
+      # Prefer Homebrew-provided X11/Motif headers/libs so the build does not pick
+      # up macOS SDK framework headers (e.g. Tk.framework) which can provide
+      # incompatible X11/Xlib.h. d
+      %W[
+        -DMotif_X11_INCLUDE_DIR=#{Formula["libx11"].opt_include}
+        -DPLATFORM=macosx
+      ]
+    else
+      %W[ -DPLATFORM=linux ]
+    end
+    
+    args = args + if build.head?
+      %W[
+        -DCMAKE_BUILD_TYPE=Debug
+      ]
+    else
+      %W[
+        -DRELEASE_TAG=#{version.to_s}
+        -DCMAKE_BUILD_TYPE=Release
+      ]
+    end
 
     # If the recommended HDF5 is not specifically disabled
     # this will allow the keg version to be found
@@ -86,9 +108,11 @@ class Mdsplus < Formula
 
     # Ensure mitdevices uses gtar (from gnu-tar) instead of "cmake -E tar"
     # which is sadly broken on macOS
-    inreplace "mitdevices/CMakeLists.txt",
-              '${CMAKE_COMMAND} -E tar -czf',
-              '/opt/homebrew/bin/gtar -czf'
+    on_macos do
+      inreplace "mitdevices/CMakeLists.txt",
+                '${CMAKE_COMMAND} -E tar -czf',
+                '/opt/homebrew/bin/gtar -czf'
+    end
 
     # add back python testing if enabled
     if build.with? "pytests"
