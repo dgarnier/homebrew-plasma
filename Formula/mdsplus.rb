@@ -17,7 +17,7 @@ class Mdsplus < Formula
   depends_on "cmake" => [:build, :test]
   depends_on "ninja" => [:build, :test]
   depends_on "bison" => :build
-  depends_on "flex" ==> :build
+  depends_on "flex"  => :build
   #depends_on "doxygen" => :build
   depends_on "maven" => :build
 
