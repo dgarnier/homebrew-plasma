@@ -129,9 +129,9 @@ class Mdsplus < Formula
     system "cmake", *args
     system "cmake", "--build", "workspace/build", "--", "-j#{ENV.make_jobs}"
     if build.with? "ctest"
-      # one broken test
-      # system "ctest", "--test-dir", "workspace/build", "-j#{ENV.make_jobs}"
-      system "ctest", "--test-dir", "workspace/build", "-j#{ENV.make_jobs}", "-E", "MdsTreeNodeTest" 
+      system "ctest", "--test-dir", "workspace/build", "-j#{ENV.make_jobs}"
+      # this test has been broken, but seems to work now...
+      # system "ctest", "--test-dir", "workspace/build", "-j#{ENV.make_jobs}", "-E", "MdsTreeNodeTest" 
     end
     system "cmake", "--install", "workspace/build", "--prefix", "#{prefix}"
 
