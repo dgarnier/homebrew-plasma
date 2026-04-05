@@ -105,6 +105,9 @@ class Mdsplus < Formula
     # this will allow the keg version to be found
     ENV["HDF5_DIR"] = Formula["hdf5"].opt_prefix if build.with? "hdf5"
 
+    # use installed installed java
+    ENV["JAVA_HOME"] = Formula["openjdk"].libexec/"openjdk.jdk/Contents/Home" if OS.mac?
+
     # Ensure mitdevices uses gtar (from gnu-tar) instead of "cmake -E tar"
     # which is sadly broken on macOS
     if OS.mac?
@@ -296,6 +299,24 @@ class Mdsplus < Formula
   end
 end
 __END__
+diff --git a/python/MDSplus/compound.py.in b/python/MDSplus/compound.py.in
+index 9a2f2774e..e06cd1667 100644
+--- a/python/MDSplus/compound.py.in
++++ b/python/MDSplus/compound.py.in
+@@ -582,7 +582,11 @@ class Opaque(_dat.TreeRefX, Compound):
+             from io import BytesIO as io
+         else:
+             from StringIO import StringIO as io
+-        return Image.open(io(self.value.data().tostring()))
++        data = self.value.data()
++        if hasattr(data, 'tobytes'):
++            return Image.open(io(data.tobytes()))
++        else:
++            return Image.open(io(data.tostring()))
+
+     @classmethod
+     def fromFile(cls, filename, typestring=None):
+
 diff --git a/java/CMakeLists.txt b/java/CMakeLists.txt
 index 05290805b..bd6cd925a 100644
 --- a/java/CMakeLists.txt
