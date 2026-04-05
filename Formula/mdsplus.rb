@@ -41,7 +41,7 @@ class Mdsplus < Formula
   depends_on "flex"  => :build
   depends_on "maven" => :build
   depends_on "ninja" => [:build, :test]
-  depends_on "numpy" => :build
+  depends_on "numpy" => [:build, :test]
   depends_on "pkg-config" => :build
   depends_on "python@3.13" => :build
   depends_on "freetds"
@@ -49,7 +49,6 @@ class Mdsplus < Formula
   depends_on "openjdk@21"
   depends_on "openmotif"
   depends_on "readline"
-  depends_on "xz"
   depends_on "hdf5" => :recommended
 
   # these dont seem to work, so replace with homebrew-provided ones
@@ -59,6 +58,7 @@ class Mdsplus < Formula
   uses_from_macos "libffi"
   uses_from_macos "libiconv"
   uses_from_macos "libxml2"
+  uses_from_macos "xz" # homebrew is actually ignoring this but ok.
   uses_from_macos "zlib" # use macos Accelerate framework
 
   on_macos do
@@ -165,16 +165,6 @@ class Mdsplus < Formula
     end
     system "cmake", "--install", "workspace/build", "--prefix", prefix.to_s
 
-    # prepend #!/bin/sh to these files so the get the right permissions
-    # after homebrew "cleans up"
-    # fixed after 7-157-3
-    # inreplace [ bin/"job_finish", bin/"job_functions",
-    #            bin/"job_output", bin/"job_start",
-    #            bin/"mdstcl", bin/"synchronize_unix"
-    #          ] do |s|
-    #            s.sub!(/\A(?!#!)/, "#!/bin/sh\n")
-    #          end
-
     # add python tests in final install (though cmake would not include them)
     if build.with? "pytests"
       (prefix/"python/MDSplus").install "python/MDSplus/tests"
@@ -207,6 +197,7 @@ class Mdsplus < Formula
   end
 
   test do
+    require "json"
     # `test do` will create, run in and delete a temporary directory.
 
     # setup python
@@ -234,8 +225,8 @@ class Mdsplus < Formula
 
     # also pass on the python path because it won't get the virtualenv when starting the server
     # the way the test does it
-    pypath = shell_output('python -c "import sys; print(sys.path)"').chomp
-    pypath.each do |path|
+    pypath = shell_output('python -c "import sys; print(sys.path[1:])"').chomp.tr("'", '"')
+    JSON.parse(pypath).each do |path|
       ENV.prepend_path "PYTHONPATH", path
     end
 
@@ -245,12 +236,12 @@ class Mdsplus < Formula
     ENV["subtree_path"]=opt_prefix/"trees/subtree"
 
     # this tests that tdi is setup and can see its home directory
-    output = shell_output('echo "helloworld()" | tditest')
-    assert_match "Hello world", output.lines[-2].chomp
+    assert_match "Hello world", shell_output('echo "helloworld()" | tditest').lines[-2].chomp
+    ohai "tditest passed"
 
-    output = pipe_output("python3", "from MDSplus._version import release_tag; print(release_tag)")
-    assert_equal version.to_s, output.chomp
-    ohai "Python loaded MDSplus version: #{output.chomp}"
+    output = pipe_output("python3", "from MDSplus._version import release_tag; print(release_tag)").chomp
+    assert_equal version.to_s, output
+    ohai "Python loaded expected MDSplus version: #{output}"
 
     output = pipe_output("python3", "exec(\"try: import MDSplus.test; print('OK')\\nexcept: print('FAIL')\")")
     if output.include? "OK"
