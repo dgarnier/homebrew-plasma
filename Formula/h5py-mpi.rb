@@ -12,14 +12,14 @@ class H5pyMpi < Formula
 
   # alphabetical order
   depends_on "cython" => :build
-  depends_on "mpi4py" => :test
   depends_on "ninja" => :build
-  depends_on "numpy" => :test
-  depends_on "python@3.10" => [:build, :test] # no mpi4py or numpy
+  depends_on "python@3.10" => [:build, :test]
   depends_on "python@3.11" => [:build, :test]
   depends_on "python@3.12" => [:build, :test]
-  depends_on "python@3.13" => [:build, :test] # this also has numpy
-  depends_on "python@3.14" => [:build, :test] # only this has mpi4py build
+  depends_on "python@3.13" => [:build, :test]
+  depends_on "python@3.14" => [:build, :test]
+  depends_on "mpi4py" => :test
+  depends_on "numpy" => :test # no mpi4py or numpy # this also has numpy # only this has mpi4py build
   depends_on "hdf5-mpi"
   depends_on "open-mpi"
 
@@ -75,14 +75,15 @@ class H5pyMpi < Formula
   end
 
   test do
-    #only test the latest python
+    # only test the latest python
+    test_packages = %w[exceptiongroup iniconfig pluggy pygments pytest pytest-mpi typing_extensions]
     ["python3.14"].each do |python|
       venv = virtualenv_create(testpath/"venv", python)
-      %w[exceptiongroup iniconfig pluggy pygments pytest pytest-mpi typing_extensions].each do |r|
+      test_packages.each do |r|
         venv.pip_install resource(r)
       end
       ENV["PATH"] = "#{testpath/"venv"/"bin"}:#{ENV["PATH"]}"
-      #system "pytest", "--pyargs", "h5py"
+      # system "pytest", "--pyargs", "h5py"
       system "mpirun", "-n", ENV.make_jobs, "pytest", "--with-mpi", "--pyargs", "h5py"
     end
   end
