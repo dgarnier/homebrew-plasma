@@ -1,13 +1,14 @@
 class H5pyMpi < Formula
   desc "Python bindings for HDF5, using MPI for parallel I/O"
   homepage "https://www.h5py.org/"
-  url "https://files.pythonhosted.org/packages/db/33/acd0ce6863b6c0d7735007df01815403f5589a21ff8c2e1ee2587a38f548/h5py-3.16.0.tar.gz"
+  url "https://github.com/h5py/h5py/releases/download/3.16.0/h5py-3.16.0.tar.gz"
   sha256 "a0dbaad796840ccaa67a4c144a0d0c8080073c34c76d5a6941d6818678ef2738"
 
   depends_on "open-mpi"
   depends_on "hdf5-mpi"
 
   depends_on "ninja" => :build
+  depends_on "cython" => :build
   depends_on "python@3.10" => [:build, :test]
   depends_on "python@3.11" => [:build, :test]
   depends_on "python@3.12" => [:build, :test]
