@@ -6,14 +6,14 @@ class H5pyMpi < Formula
 
   # alphabetical order
   depends_on "cython" => :build
-  depends_on "hdf5-mpi"
   depends_on "ninja" => :build
-  depends_on "open-mpi"
   depends_on "python@3.10" => [:build, :test]
   depends_on "python@3.11" => [:build, :test]
   depends_on "python@3.12" => [:build, :test]
   depends_on "python@3.13" => [:build, :test]
   depends_on "python@3.14" => [:build, :test]
+  depends_on "hdf5-mpi"
+  depends_on "open-mpi"
 
   def pythons
     deps.map(&:to_formula)
@@ -37,8 +37,7 @@ class H5pyMpi < Formula
     HOMEBREW_PREFIX.glob("lib/python*.*/site-packages/h5py/**/*.pyc").map(&:unlink)
   end
 
-  def test
+  test do
     system "false"
   end
-
 end
