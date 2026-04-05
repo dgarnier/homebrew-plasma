@@ -47,7 +47,7 @@ class H5pyMpi < Formula
     url "https://files.pythonhosted.org/packages/a6/2b/0ed49de84e96ebf771c86a16d88b48c08d291627cfcdce30973f8538c99e/pytest_mpi-0.6-py2.py3-none-any.whl"
     sha256 "1b7e193fb3be31d08c8e4dd7435e8e13e14b17ead6a6fc6aa07a6d3c7145590b"
   end
-  resource "typing_extensions" do
+  resource "typing-extensions" do
     url "https://files.pythonhosted.org/packages/72/94/1a15dd82efb362ac84269196e94cf00f187f7ed21c242792a923cdb1c61f/typing_extensions-4.15.0.tar.gz"
     sha256 "0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466"
   end
@@ -76,7 +76,7 @@ class H5pyMpi < Formula
 
   test do
     # only test the latest python
-    test_packages = %w[exceptiongroup iniconfig pluggy pygments pytest pytest-mpi typing_extensions]
+    test_packages = %w[exceptiongroup iniconfig pluggy pygments pytest pytest-mpi typing-extensions]
     ["python3.14"].each do |python|
       venv = virtualenv_create(testpath/"venv", python)
       test_packages.each do |r|
