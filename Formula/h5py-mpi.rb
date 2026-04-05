@@ -13,16 +13,15 @@ class H5pyMpi < Formula
   # alphabetical order
   depends_on "cython" => :build
   depends_on "ninja" => :build
-  # depends_on "python@3.10" => [:build, :test]
-  # depends_on "python@3.11" => [:build, :test]
-  depends_on "python@3.12" => [:build, :test]
-  depends_on "python@3.13" => [:build, :test]
-  depends_on "python@3.14" => [:build, :test]
-  depends_on "mpi4py" => :test
-  depends_on "numpy" => :test # no mpi4py or numpy # this also has numpy # only this has mpi4py build
+  depends_on "python@3.12" => [:build, :test] # receipe supports earlier python (>=3.10), but
+  depends_on "python@3.13" => [:build, :test] # github actions fail with too long builds
+  depends_on "python@3.14" => [:build, :test] # only 3.14 has mpi4py build
+  depends_on "mpi4py" => :test # only on 3.14
+  depends_on "numpy" => :test # only on 3.13, 3.14
   depends_on "hdf5-mpi"
   depends_on "open-mpi"
 
+  # resources for testing
   resource "exceptiongroup" do
     url "https://files.pythonhosted.org/packages/8a/0e/97c33bf5009bdbac74fd2beace167cab3f978feb69cc36f1ef79360d6c4e/exceptiongroup-1.3.1-py3-none-any.whl"
     sha256 "a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598"
