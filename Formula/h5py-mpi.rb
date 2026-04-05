@@ -4,11 +4,11 @@ class H5pyMpi < Formula
   url "https://github.com/h5py/h5py/releases/download/3.16.0/h5py-3.16.0.tar.gz"
   sha256 "a0dbaad796840ccaa67a4c144a0d0c8080073c34c76d5a6941d6818678ef2738"
 
-  depends_on "open-mpi"
-  depends_on "hdf5-mpi"
-
-  depends_on "ninja" => :build
+  # alphabetical order
   depends_on "cython" => :build
+  depends_on "hdf5-mpi"
+  depends_on "ninja" => :build
+  depends_on "open-mpi"
   depends_on "python@3.10" => [:build, :test]
   depends_on "python@3.11" => [:build, :test]
   depends_on "python@3.12" => [:build, :test]
@@ -17,8 +17,8 @@ class H5pyMpi < Formula
 
   def pythons
     deps.map(&:to_formula)
-      .select { |f| f.name.start_with?("python@") }
-      .map { |f| f.opt_libexec/"bin/python" }
+        .select { |f| f.name.start_with?("python@") }
+        .map { |f| f.opt_libexec/"bin/python" }
   end
 
   def install
@@ -35,6 +35,10 @@ class H5pyMpi < Formula
 
   def post_install
     HOMEBREW_PREFIX.glob("lib/python*.*/site-packages/h5py/**/*.pyc").map(&:unlink)
+  end
+
+  def test
+    system "false"
   end
 
 end
