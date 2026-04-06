@@ -50,6 +50,7 @@ class Mdsplus < Formula
   depends_on "openmotif"
   depends_on "readline"
   depends_on "hdf5" => :recommended
+  depends_on "xz"
 
   # these dont seem to work, so replace with homebrew-provided ones
   # uses_from_macos "readline"
@@ -58,7 +59,6 @@ class Mdsplus < Formula
   uses_from_macos "libffi"
   uses_from_macos "libiconv"
   uses_from_macos "libxml2"
-  uses_from_macos "xz" # homebrew is actually ignoring this but ok.
   uses_from_macos "zlib" # use macos Accelerate framework
 
   on_macos do
@@ -165,6 +165,18 @@ class Mdsplus < Formula
     end
     system "cmake", "--install", "workspace/build", "--prefix", prefix.to_s
 
+    # Brew audit doesn't like non-libraries in lib
+    # and there are no exceptions... UNLESS its not considered a new formula...
+    # so older ones are grandfathered?  ugh.
+    rm [lib/"MDSobjectsLVShr", lib/"libMDSobjectsLVShr"]
+    # lib.install_symlink lib/("libMDSobjectsLVShr"+(OS.mac? ? ".dylib" : ".so")) => "MDSobjectsLVShr"
+    # lib.install_symlink lib/("libMDSobjectsLVShr"+(OS.mac? ? ".dylib" : ".so")) => "libMDSobjectsLVShr"
+    # these should probably be in pkgshare
+    pkgshare.install [lib/"acq_root_filesystem.tgz", lib/"acq_root_filesystem.tgz_ffs", lib/"dwscope_setup.ps"]
+    # lib.install_symlink [libexec/"acq_root_filesystem.tgz",
+    #                     libexec/"acq_root_filesystem.tgz_ffs",
+    #                     libexec/"dwscope_setup.ps"]
+
     # add python tests in final install (though cmake would not include them)
     if build.with? "pytests"
       (prefix/"python/MDSplus").install "python/MDSplus/tests"
@@ -178,6 +190,8 @@ class Mdsplus < Formula
     # ENV.prepend_path "PATH", buildpath/"venv/bin"
     system "python3", "-m", "pip", "wheel", "--no-deps",
       "-w", prefix/"python", prefix/"python/MDSplus"
+    # clean up
+    rm_r [prefix/"python/MDSplus/build", prefix/"python/MDSplus/MDSplus.egg-info"]
   end
 
   def caveats
