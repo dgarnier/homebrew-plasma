@@ -1,50 +1,42 @@
-# Documentation: https://docs.brew.sh/Formula-Cookbook
-#                https://rubydoc.brew.sh/Formula
-# PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 class Ascot5 < Formula
   include Language::Python::Virtualenv
 
-  desc "ASCOT5 is a high-performance orbit-following code for fusion plasma physics and engineering"
+  desc "High-performance orbit-following code for fusion plasma physics and engineering"
   homepage "https://ascot4fusion.github.io/ascot5/"
-  url "https://github.com/ascot4fusion/ascot5/archive/refs/tags/5.6.3.zip"
+  url "https://github.com/ascot4fusion/ascot5/archive/refs/tags/5.6.3.tar.gz"
   sha256 "3b518b772cc8ad1bc0ab2fa6fab859cad26bb0246ad431241b35a7c26c7fe010"
   license "LGPL-3.0"
 
   head "https://github.com/ascot4fusion/ascot5.git"
 
-  depends_on "make" => :build
-  # depends_on "uv" => :build
-  depends_on "cmake" => :build  # because clang python does
-  depends_on "ninja" => :build  # because its required by cmake sometimes
+  depends_on "cmake" => :build
   depends_on "cython" => :build
-  depends_on "libomp"
-  depends_on "open-mpi"
-  depends_on "llvm@19"
-  depends_on "hdf5-mpi"
+  depends_on "make" => :build
+  depends_on "ninja" => :build # because its required by cmake sometimes
+  depends_on "geos"
   depends_on "h5py-mpi"
-  depends_on "python@3.14"
-  depends_on "python-tk@3.14"
-
-  #for pyvista
-  depends_on "vtk"
+  depends_on "hdf5-mpi"
+  depends_on "libomp"
+  depends_on "llvm@19"
+  depends_on "mpi4py"
+  depends_on "numpy"
+  depends_on "open-mpi"
   depends_on "pillow"
+  depends_on "python-matplotlib"
+  depends_on "python-tk@3.14"
+  depends_on "python@3.14"
 
+  # for pyvista
+  depends_on "scipy"
+  depends_on "spatialindex"
+  depends_on "symengine"
+  depends_on "vtk"
 
   # for alphashape
-  depends_on "geos"
-  depends_on "spatialindex"
 
   # ascot5 relies on ctypeslib2 for Python bindings
   # and calls a code called clang2py to generate the bindings
   # the latest release (2.4.0), claims to be for clang 19 and python 3.13
-
-  depends_on "numpy"
-  depends_on "scipy"
-  depends_on "python-matplotlib"
-  depends_on "mpi4py"
-  depends_on "symengine"
-  depends_on "h5py-mpi"
-
 
   resource "wurlitzer" do
     url "https://files.pythonhosted.org/packages/9a/24/93ce54550a9dd3fd996ed477f00221f215bf6da3580397fbc138d6036e2e/wurlitzer-3.1.1-py3-none-any.whl"
@@ -114,17 +106,16 @@ class Ascot5 < Formula
   # Additional dependencies for building
   resource "clang" do
     url "https://files.pythonhosted.org/packages/65/f3/5906d54f4a6e52b76a184cbc22a1b76cd4787908fa2fab43a177b1437930/clang-19.1.7.tar.gz"
-    #pypi "clang", version: "19.1.7"
+    # pypi "clang", version: "19.1.7"
     sha256 "bf8b109db34b72853f8a7c9baa89c9782a657e6c29763fce5bd773043385bcef"
   end
   resource "ctypeslib2" do
     url "https://files.pythonhosted.org/packages/b7/c2/0c939a5f852c148ab221cc438e0e335c94f7724df163df5933ebace7c5d6/ctypeslib2-2.4.0.tar.gz"
-    #pypi "ctypeslib2", version: "2.4.0"
+    # pypi "ctypeslib2", version: "2.4.0"
     sha256 "1dd0f1ab679394bd44addb979d9e05b9d06669e907d94255fddbd0c3ca2f293e"
   end
 
   def install
-
     inreplace "src/Makefile", "-shlib", ""
 
     ENV["MPI"] = "1"
@@ -139,11 +130,11 @@ class Ascot5 < Formula
 
     # Use clang/clang++ from llvm@19 as the C and C++ compilers.
     ENV["OMPI_CC"] = (llvm.opt_bin/"clang").to_s
-    #ENV["CFLAGS"] = "-I#{omp.opt_include} -lomp -lhdf5 -lhdf5_hl"
+    # ENV["CFLAGS"] = "-I#{omp.opt_include} -lomp -lhdf5 -lhdf5_hl"
     ENV["LDFLAGS"] = "-L#{omp.opt_lib} -lomp -L#{hdf5.opt_lib} -lhdf5 -lhdf5_hl"
     ENV["CFLAGS"] = "-I#{omp.opt_include}"
 
-    on_macos do
+    if OS.mac?
       # just make for current version of os if building from source
       ENV["MACOSX_DEPLOYMENT_TARGET"] = `sw_vers -productVersion`.chomp
     end
@@ -158,19 +149,21 @@ class Ascot5 < Formula
     # build a venv for ctypeslib2 and clang
     # so that it can run the right clang2py and link the right clang library
     bvenv = virtualenv_create(buildpath/".venv", "python3.14")
-    #ENV.prepend_path "PATH", venv
+    # ENV.prepend_path "PATH", venv
     bvenv.pip_install resource("ctypeslib2")
     bvenv.pip_install resource("clang")
     ENV.prepend_path "PATH", buildpath/".venv/bin"
 
     # make sure ctypeslib2 finds the right clang library which matches the python clang we just built
-    ENV["CLANG_LIBRARY_PATH"] = "#{llvm.opt_lib}"
+    ENV["CLANG_LIBRARY_PATH"] = llvm.opt_lib.to_s
     ENV["CFLAGS"] = "#{ENV["CFLAGS"]} -I#{mpi.opt_include}"
 
     # look in lib
-    inreplace ".setcdllascot2py.py", "libpath = str(Path(__file__).absolute().parent.parent.parent)", "libpath = \\\"#{lib}\\\""
+    inreplace ".setcdllascot2py.py", "libpath = str(Path(__file__).absolute().parent.parent.parent)",
+"libpath = \\\"#{lib}\\\""
     inreplace ".setcdllascot2py.py", "build/", ""
-    inreplace ["a5py/testascot/physicstests.py", "a5py/testascot/unittests.py"], "./../../build/ascot5_main", "#{bin}/ascot5_main"
+    inreplace ["a5py/testascot/physicstests.py", "a5py/testascot/unittests.py"], "./../../build/ascot5_main",
+"#{bin}/ascot5_main"
     inreplace ["a5py/testascot/physicstests.py"], "./../../build/bbnbi5", "#{bin}/bbnbi5"
 
     # fix trace mode in components.py
@@ -189,7 +182,7 @@ class Ascot5 < Formula
     # for shapely
     ENV["GEOS_CONFIG"] = "#{Formula["geos"].opt_bin}/geos-config"
     # for rtree
-    ENV["SPATIALINDEX_C_LIBRARY"] = "#{Formula["spatialindex"].opt_lib}"
+    ENV["SPATIALINDEX_C_LIBRARY"] = Formula["spatialindex"].opt_lib.to_s
     %w[unyt wurlitzer pyvista freeqdsk sympy mpmath xmlschema
        elementpath shapely trimesh rtree alphashape typing_extensions
        scooby cyclopts pooch].each do |r|
@@ -199,7 +192,6 @@ class Ascot5 < Formula
 
     bin.install "build/ascot5_main", "build/bbnbi5"
     lib.install "build/libascot.so"
-
   end
 
   test do
