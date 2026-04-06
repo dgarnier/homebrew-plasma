@@ -45,13 +45,16 @@ class Mdsplus < Formula
   depends_on "pkg-config" => :build
   depends_on "python@3.13" => :build
   depends_on "freetds"
+  depends_on "gcc" # need libgfortran after building
+  depends_on "hdf5" # cant use :recommended with bottles
   depends_on "libx11"
+  depends_on "libxt"
   depends_on "openjdk@21"
   depends_on "openmotif"
   depends_on "readline"
   depends_on "xz"
-  depends_on "hdf5" => :recommended
 
+  # recommended doesn't seem to work with bottls.. so no
   # these dont seem to work, so replace with homebrew-provided ones
   # uses_from_macos "readline"
   # uses_from_macos "xz"  # liblzma somehow this isn't getting used
@@ -66,12 +69,8 @@ class Mdsplus < Formula
   end
 
   on_linux do
-    depends_on "gcc" => :build
-    depends_on "gfortran" => :build
     depends_on "gperf" => :build
-    depends_on "libxml2"
     depends_on "openblas"
-    depends_on "zlib"
   end
 
   def install
