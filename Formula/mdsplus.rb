@@ -49,8 +49,8 @@ class Mdsplus < Formula
   depends_on "openjdk@21"
   depends_on "openmotif"
   depends_on "readline"
-  depends_on "hdf5" => :recommended
   depends_on "xz"
+  depends_on "hdf5" => :recommended
 
   # these dont seem to work, so replace with homebrew-provided ones
   # uses_from_macos "readline"
