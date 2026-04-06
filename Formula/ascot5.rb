@@ -4,7 +4,7 @@ class Ascot5 < Formula
   desc "High-performance orbit-following code for fusion plasma physics and engineering"
   homepage "https://ascot4fusion.github.io/ascot5/"
   url "https://github.com/ascot4fusion/ascot5/archive/refs/tags/5.6.3.tar.gz"
-  sha256 "3b518b772cc8ad1bc0ab2fa6fab859cad26bb0246ad431241b35a7c26c7fe010"
+  sha256 "e03aa5f17a034451de35173686c2e7afebe7c33e68162cedf7b3e091519a2921"
   license "LGPL-3.0"
 
   head "https://github.com/ascot4fusion/ascot5.git"
@@ -86,7 +86,7 @@ class Ascot5 < Formula
     url "https://files.pythonhosted.org/packages/2e/83/67ff905694df5b34a777123b59fdfd05998d5a31766f188aafbf5b340055/alphashape-1.3.1.tar.gz"
     sha256 "7a27340afc5f8ed301577acec46bb0cf2bada5410045f7289142e735ef6977ec"
   end
-  resource "typing_extensions" do
+  resource "typing-extensions" do
     url "https://files.pythonhosted.org/packages/72/94/1a15dd82efb362ac84269196e94cf00f187f7ed21c242792a923cdb1c61f/typing_extensions-4.15.0.tar.gz"
     sha256 "0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466"
   end
@@ -184,7 +184,7 @@ class Ascot5 < Formula
     # for rtree
     ENV["SPATIALINDEX_C_LIBRARY"] = Formula["spatialindex"].opt_lib.to_s
     %w[unyt wurlitzer pyvista freeqdsk sympy mpmath xmlschema
-       elementpath shapely trimesh rtree alphashape typing_extensions
+       elementpath shapely trimesh rtree alphashape typing-extensions
        scooby cyclopts pooch].each do |r|
       venv.pip_install resource(r)
     end
