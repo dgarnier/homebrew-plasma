@@ -11,6 +11,7 @@ class H5pyMpi < Formula
     rebuild 1
     sha256 cellar: :any, arm64_sequoia: "4a943a88cdb09a1e6ca68a7786218f9ad2edba011759607e9db3dbacb3f2d9ff"
     sha256 cellar: :any, arm64_sonoma:  "daf6ccb6977800bce08dfd8f42657de2dd6ae71fc8bba178d93167a47c88ea17"
+    sha256 cellar: :any, arm64_tahoe:   "1037b5a5f2688d8f0ac5ec28cd36ef5d0432f77fdb073cc96cb8cda24fc67a04"
   end
 
   # alphabetical order
