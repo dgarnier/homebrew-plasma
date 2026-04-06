@@ -22,7 +22,7 @@ class Mdsplus < Formula
   end
 
   bottle do
-    rebuild 1
+    sha256 cellar: :any, arm64_tahoe: "a8f32917685089abe21f527220b77e6d0501965b2a1b8e1ba7a78a49f0edc49a"
   end
 
   head do
@@ -43,7 +43,7 @@ class Mdsplus < Formula
   depends_on "ninja" => [:build, :test]
   depends_on "numpy" => [:build, :test]
   depends_on "pkg-config" => :build
-  depends_on "python@3.13" => :build
+  depends_on "python@3.13" => [:build, :test]
   depends_on "freetds"
   depends_on "gcc" # need libgfortran after building
   depends_on "hdf5" # cant use :recommended with bottles
@@ -167,14 +167,16 @@ class Mdsplus < Formula
     # Brew audit doesn't like non-libraries in lib
     # and there are no exceptions... UNLESS its not considered a new formula...
     # so older ones are grandfathered?  ugh.
+    # do we really need these without the shlib extension?
+    sh_ext = OS.mac? ? ".dylib" : ".so"
     rm [lib/"MDSobjectsLVShr", lib/"libMDSobjectsLVShr"]
-    # lib.install_symlink lib/("libMDSobjectsLVShr"+(OS.mac? ? ".dylib" : ".so")) => "MDSobjectsLVShr"
-    # lib.install_symlink lib/("libMDSobjectsLVShr"+(OS.mac? ? ".dylib" : ".so")) => "libMDSobjectsLVShr"
-    # these should probably be in pkgshare
+    lib.install_symlink lib/("libMDSobjectsLVShr"+sh_ext) => ("MDSobjectsLVShr"+sh_ext)
+
+    # move data files into pkgshare
     pkgshare.install [lib/"acq_root_filesystem.tgz", lib/"acq_root_filesystem.tgz_ffs", lib/"dwscope_setup.ps"]
-    # lib.install_symlink [libexec/"acq_root_filesystem.tgz",
-    #                     libexec/"acq_root_filesystem.tgz_ffs",
-    #                     libexec/"dwscope_setup.ps"]
+    # fix references to moved datafiles
+    inreplace prefix/"etc/envsyms", "lib/dwscope_setup.ps", "share/mdsplus/dwscope_setup.ps"
+    inreplace bin/"dtaq_update_board.sh", "lib/acq_root_filesystem", "share/mdsplus/acq_root_filesystem"
 
     # add python tests in final install (though cmake would not include them)
     if build.with? "pytests"
