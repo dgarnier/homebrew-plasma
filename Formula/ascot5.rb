@@ -7,12 +7,18 @@ class Ascot5 < Formula
   sha256 "e03aa5f17a034451de35173686c2e7afebe7c33e68162cedf7b3e091519a2921"
   license "LGPL-3.0"
 
-  head "https://github.com/ascot4fusion/ascot5.git"
+  head "https://github.com/ascot4fusion/ascot5.git", branch: "main"
+
+  bottle do
+    sha256 cellar: :any, arm64_tahoe: "a70efbb75f43a8308d75f8c73590a3be240c1a6a840c5d8d7ed3317f1ba03ce2"
+  end
 
   depends_on "cmake" => :build
   depends_on "cython" => :build
+  depends_on "doxygen" => :build
   depends_on "make" => :build
   depends_on "ninja" => :build # because its required by cmake sometimes
+  depends_on "pandoc" => :build
   depends_on "geos"
   depends_on "h5py-mpi"
   depends_on "hdf5-mpi"
@@ -25,14 +31,10 @@ class Ascot5 < Formula
   depends_on "python-matplotlib"
   depends_on "python-tk@3.14"
   depends_on "python@3.14"
-
-  # for pyvista
   depends_on "scipy"
   depends_on "spatialindex"
-  depends_on "symengine"
-  depends_on "vtk"
-
-  # for alphashape
+  depends_on "symengine" # sympy
+  depends_on "vtk" # pyvista
 
   # ascot5 relies on ctypeslib2 for Python bindings
   # and calls a code called clang2py to generate the bindings
@@ -51,8 +53,8 @@ class Ascot5 < Formula
     sha256 "36f9b614b03b7af930b5239e1f9e0ea2da4a8b16de8284b8e8c96a8160a08895"
   end
   resource "unyt" do
-    url "https://files.pythonhosted.org/packages/53/8a/889bfb9c7fe296e8f6224498d173442250b3ee4706d04d286971a348e07c/unyt-3.1.0-py3-none-any.whl"
-    sha256 "6ff9efe694a1c13f5b07ccb4c6b30a0e282d5e4989947f0ef5aadf4ad7be3f69"
+    url "https://files.pythonhosted.org/packages/ff/23/61563de0c91d8095409076b4d110862bdc6c1023102f4942b95ec5d5a26f/unyt-3.0.4-py3-none-any.whl"
+    sha256 "323564921b8744e900a5db7b8dc60e315b4d11f35f23203a513b14977252acdb"
   end
   resource "sympy" do
     url "https://files.pythonhosted.org/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl"
@@ -140,15 +142,16 @@ class Ascot5 < Formula
     end
 
     # these make them in the builddir but don't get installed
-    system "make", "libascot", "-j"
-    system "make", "ascot5_main", "-j"
-    system "make", "bbnbi5", "-j"
+    system "make", "libascot", "-j", "MPI=1"
+    system "make", "ascot5_main", "-j", "MPI=1"
+    system "make", "bbnbi5", "-j", "MPI=1"
 
     ENV.prepend_path "PATH", llvm.opt_bin
 
     # build a venv for ctypeslib2 and clang
     # so that it can run the right clang2py and link the right clang library
-    bvenv = virtualenv_create(buildpath/".venv", "python3.14")
+    python = "python3.14"
+    bvenv = virtualenv_create(buildpath/".venv", python)
     # ENV.prepend_path "PATH", venv
     bvenv.pip_install resource("ctypeslib2")
     bvenv.pip_install resource("clang")
@@ -160,16 +163,17 @@ class Ascot5 < Formula
 
     # look in lib
     inreplace ".setcdllascot2py.py", "libpath = str(Path(__file__).absolute().parent.parent.parent)",
-"libpath = \\\"#{lib}\\\""
+                                     "libpath = \\\"#{lib}\\\""
     inreplace ".setcdllascot2py.py", "build/", ""
     inreplace ["a5py/testascot/physicstests.py", "a5py/testascot/unittests.py"], "./../../build/ascot5_main",
-"#{bin}/ascot5_main"
+                                                                                 "#{bin}/ascot5_main"
     inreplace ["a5py/testascot/physicstests.py"], "./../../build/bbnbi5", "#{bin}/bbnbi5"
 
     # fix trace mode in components.py
     inreplace "a5py/gui/components.py", ".trace('w'", ".trace_add('write'"
 
     system "make", "ascot2py.py"
+
     ENV.remove("PATH", buildpath/".venv/bin")
 
     # bin.install Dir["bin/*"]
@@ -192,18 +196,30 @@ class Ascot5 < Formula
 
     bin.install "build/ascot5_main", "build/bbnbi5"
     lib.install "build/libascot.so"
+
+    # now make docs (with correct python environment)
+    virtualenv_create(buildpath/"venv_sphinx", python)
+    system buildpath/"venv_sphinx/bin/python3.14", "-m", "pip", "install", "sphinx==6.2.1",
+      "numpydoc", "nbsphinx", "nbformat", "breathe", "sphinxcontrib-bibtex",
+      "sphinx-rtd-theme", "sphinx-gallery", "sphinx-design", "sphinxcontrib-mermaid"
+
+    # cheat to get both environtments working together
+    ENV.prepend_path "PYTHONPATH", libexec/Language::Python.site_packages(python).to_s
+    ENV.prepend_path "PYTHONPATH", buildpath/"venv_sphinx"/Language::Python.site_packages(python).to_s
+    ENV.prepend_path "PATH", (buildpath/"venv_sphinx/bin").realpath.to_s
+    system "make", "doc", "-j", ENV.make_jobs.to_s
+
+    doc.install Dir["build/doc/*"]
   end
 
   test do
-    # `test do` will create, run in and delete a temporary directory.
-    #
-    # This test will fail and we won't accept that! For Homebrew/homebrew-core
-    # this will need to be a test that verifies the functionality of the
-    # software. Run the test with `brew test ascot5`. Options passed
-    # to `brew install` such as `--HEAD` also need to be provided to `brew test`.
-    #
-    # The installed folder is not in the path, so use the entire path to any
-    # executables being tested: `system bin/"program", "do", "something"`.
-    system "false"
+    # not sure how to test main ascot5 as need a test file..
+    # system bin/"ascot5_main"
+    # just check that you can import a5py, which is a lot of stuff
+    python = "python3.14"
+    virtualenv_create(testpath/"venv", python)
+    ENV.prepend_path "PYTHONPATH", libexec/Language::Python.site_packages(python).to_s
+    ENV.prepend_path "PATH", (testpath/"venv/bin").realpath.to_s
+    system "python", "-c", "import a5py"
   end
 end
