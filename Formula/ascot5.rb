@@ -9,10 +9,6 @@ class Ascot5 < Formula
 
   head "https://github.com/ascot4fusion/ascot5.git", branch: "main"
 
-  bottle do
-    sha256 cellar: :any, arm64_tahoe: "a70efbb75f43a8308d75f8c73590a3be240c1a6a840c5d8d7ed3317f1ba03ce2"
-  end
-
   depends_on "cmake" => :build
   depends_on "cython" => :build
   depends_on "doxygen" => :build
