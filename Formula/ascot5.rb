@@ -5,7 +5,7 @@ class Ascot5 < Formula
   homepage "https://ascot4fusion.github.io/ascot5/"
   url "https://github.com/ascot4fusion/ascot5/archive/refs/tags/5.6.3.tar.gz"
   sha256 "e03aa5f17a034451de35173686c2e7afebe7c33e68162cedf7b3e091519a2921"
-  license "LGPL-3.0"
+  license "LGPL-3.0-only"
 
   head "https://github.com/ascot4fusion/ascot5.git", branch: "main"
 
