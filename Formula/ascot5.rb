@@ -16,21 +16,21 @@ class Ascot5 < Formula
   depends_on "ninja" => :build # because its required by cmake sometimes
   depends_on "pandoc" => :build
   depends_on "geos"
-  depends_on "h5py-mpi"
+  depends_on "h5py-mpi" => :no_linkage
   depends_on "hdf5-mpi"
   depends_on "libomp"
   depends_on "llvm@19"
-  depends_on "mpi4py"
-  depends_on "numpy"
+  depends_on "mpi4py" => :no_linkage
+  depends_on "numpy" => :no_linkage
   depends_on "open-mpi"
-  depends_on "pillow"
-  depends_on "python-matplotlib"
-  depends_on "python-tk@3.14"
-  depends_on "python@3.14"
-  depends_on "scipy"
-  depends_on "spatialindex"
-  depends_on "symengine" # sympy
-  depends_on "vtk" # pyvista
+  depends_on "pillow" => :no_linkage
+  depends_on "python-matplotlib" => :no_linkage
+  depends_on "python-tk@3.14" => :no_linkage
+  depends_on "python@3.14" => :no_linkage
+  depends_on "scipy" => :no_linkage
+  depends_on "spatialindex" => :no_linkage
+  depends_on "symengine" => :no_linkage # sympy
+  depends_on "vtk" => :no_linkage # pyvista
 
   # ascot5 relies on ctypeslib2 for Python bindings
   # and calls a code called clang2py to generate the bindings
