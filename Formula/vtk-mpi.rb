@@ -24,6 +24,7 @@ class VtkMpi < Formula
   depends_on "lz4"
   depends_on "netcdf-mpi"
   depends_on "nlohmann-json"
+  depends_on "open-mpi"
   depends_on "proj"
   depends_on "pugixml"
   depends_on "python@3.14"
