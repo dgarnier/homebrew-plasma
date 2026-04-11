@@ -9,6 +9,13 @@ class Ascot5 < Formula
 
   head "https://github.com/ascot4fusion/ascot5.git", branch: "main"
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/ascot5-5.6.3"
+    sha256 cellar: :any, arm64_tahoe:   "61b8919f253e0ff504b4d86a0874ffe0a5206fd3ba607862826fffab26b6f553"
+    sha256 cellar: :any, arm64_sequoia: "7a1c2ef92d11800f70ad3dd7cf8d64e8b6d0a782a7e9847038faa77bdf330545"
+    sha256 cellar: :any, arm64_sonoma:  "aea3de01d8c8f6682fdf163b1b8a4530ae9461410323487e261ce8cea850e30b"
+  end
+
   depends_on "cmake" => :build
   depends_on "cython" => :build
   depends_on "doxygen" => :build
