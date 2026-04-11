@@ -43,6 +43,8 @@ class NetcdfMpi < Formula
     system "cmake", "--build", "build_static"
     lib.install "build_static/libnetcdf.a"
 
+    # get rid of complaint about non libraries in lib
+    libexec.install lib/"libnetcdf.settings"
     # Remove shim paths
     # inreplace [bin/"nc-config", lib/"pkgconfig/netcdf.pc", lib/"cmake/netCDF/netCDFConfig.cmake",
     #            lib/"libnetcdf.settings"], Superenv.shims_path/ENV.cc, ENV.cc
