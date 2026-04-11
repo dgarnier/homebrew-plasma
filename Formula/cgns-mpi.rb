@@ -12,6 +12,14 @@ class CgnsMpi < Formula
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/cgns-mpi-4.5.1"
+    sha256                               arm64_tahoe:   "b76f7682fd9aac5895169fda0b311feb378b5f825038f9922f7c79dccf3760ea"
+    sha256                               arm64_sequoia: "e8a938ba97c12d6524c892b16280a4d4620d80af388df39f7606a376b399cca9"
+    sha256                               arm64_sonoma:  "cf2dafc94d74dc6c344cee9d75ca926ace83f8bad9608b7c0acd03f07f25ed8c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4f5a82eea52228257f6a1129179a240f0d9b685053f40b9d09d56c46b096458d"
+  end
+
   depends_on "cmake" => :build
   depends_on "gcc" # for gfortran
   depends_on "hdf5-mpi"
