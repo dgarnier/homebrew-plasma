@@ -6,6 +6,14 @@ class VtkMpi < Formula
   license "BSD-3-Clause"
   head "https://gitlab.kitware.com/vtk/vtk.git", branch: "master"
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/vtk-mpi-9.5.2"
+    sha256 cellar: :any,                 arm64_tahoe:   "e75e0b2811b90040503667594cb50fd59869345d99b2a9ca68f97979cb5c1fe5"
+    sha256 cellar: :any,                 arm64_sequoia: "b5f37a5fb23a756643289c6ef125f5367568f031c5bd2ff2f06c85c75075c186"
+    sha256 cellar: :any,                 arm64_sonoma:  "0b0a95daf13c65272a6e411a62c81da2067ae200c3f707bf496a897dea1507f8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c0628fa7f0dd920c658c2da35205e954cb2535725b6caed2b162ae62793549c0"
+  end
+
   depends_on "cmake" => [:build, :test]
   depends_on "pyqt" => :test
   depends_on "boost"
