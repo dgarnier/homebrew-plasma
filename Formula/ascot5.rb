@@ -30,7 +30,7 @@ class Ascot5 < Formula
   depends_on "scipy" => :no_linkage
   depends_on "spatialindex" => :no_linkage
   depends_on "symengine" => :no_linkage # sympy
-  depends_on "vtk" => :no_linkage # pyvista
+  depends_on "vtk-mpi" => :no_linkage # pyvista
 
   # ascot5 relies on ctypeslib2 for Python bindings
   # and calls a code called clang2py to generate the bindings
