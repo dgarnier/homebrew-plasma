@@ -9,8 +9,8 @@ on:
 jobs:
   test-bot:
     strategy:
-      matrix:
-        os: [ubuntu-22.04, macos-14, macos-15, macos-15-intel, macos-26]
+      matrix: # macos-15-intel is useless.. need macos-14-intel
+        os: [ubuntu-22.04, macos-14, macos-15, macos-26]
     runs-on: ${{ matrix.os }}
     permissions:
       actions: read
@@ -41,7 +41,7 @@ jobs:
 
       - name: Upload bottles as artifact
         if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bottles_${{ matrix.os }}
           path: "*.bottle.*"
