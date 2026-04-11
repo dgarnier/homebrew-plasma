@@ -12,6 +12,14 @@ class NetcdfMpi < Formula
     regex(/^(?:netcdf[._-])?v?(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/netcdf-mpi-4.10.0"
+    sha256 cellar: :any,                 arm64_tahoe:   "6f953225923b4b8622802343b413544df785ff4d6cd650882f5221f0dc70c752"
+    sha256 cellar: :any,                 arm64_sequoia: "a48a518cc6cb53532bf4fbd8adb6cab1feb4b2d2510bf2d06cbc7d3d7cc647c0"
+    sha256 cellar: :any,                 arm64_sonoma:  "72f089dea76a709ecc587ca10a2b6f24e4f822dc741e9ccb81df6a1817ff88b5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4f32b9aa8b99e9ca02a40db1e6eed6fc4fd40843b5e386f5f9de940ff7104831"
+  end
+
   depends_on "cmake" => :build
   depends_on "hdf5-mpi"
   depends_on "open-mpi"
