@@ -4,15 +4,7 @@ class VtkMpi < Formula
   url "https://www.vtk.org/files/release/9.5/VTK-9.5.2.tar.gz"
   sha256 "cee64b98d270ff7302daf1ef13458dff5d5ac1ecb45d47723835f7f7d562c989"
   license "BSD-3-Clause"
-  revision 3
-  compatibility_version 1
   head "https://gitlab.kitware.com/vtk/vtk.git", branch: "master"
-
-  conflicts_with "vtk", because: "vtk-mpi and vtk are the same package"
-
-  bottle do
-    rebuild 0
-  end
 
   depends_on "cmake" => [:build, :test]
   depends_on "pyqt" => :test
@@ -52,6 +44,8 @@ class VtkMpi < Formula
     depends_on "mesa"
     depends_on "zlib-ng-compat"
   end
+
+  conflicts_with "vtk", because: "vtk-mpi and vtk both install the same binaries"
 
   # Backport fix for HDF5 2.0.0
   patch :p2 do
