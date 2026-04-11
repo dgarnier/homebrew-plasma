@@ -9,7 +9,7 @@ class VtkMpi < Formula
   depends_on "cmake" => [:build, :test]
   depends_on "pyqt" => :test
   depends_on "boost"
-  depends_on "cgns"
+  depends_on "cgns-mpi"
   depends_on "double-conversion"
   depends_on "eigen"
   depends_on "fontconfig"
@@ -84,6 +84,7 @@ class VtkMpi < Formula
       -DVTK_MODULE_ENABLE_VTK_InfovisBoostGraphAlgorithms:STRING=YES
       -DVTK_MODULE_ENABLE_VTK_RenderingFreeTypeFontConfig:STRING=YES
       -DVTK_MODULE_USE_EXTERNAL_VTK_cgns:BOOL=ON
+      -DCGNS_ROOT:PATH=#{Formula["cgns-mpi"].opt_prefix}
       -DVTK_MODULE_USE_EXTERNAL_VTK_doubleconversion:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_eigen:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_expat:BOOL=ON
