@@ -87,7 +87,7 @@ class H5pyMpi < Formula
       end
       ENV["PATH"] = "#{testpath/"venv"/"bin"}:#{ENV["PATH"]}"
       # system "pytest", "--pyargs", "h5py"
-      system "mpirun", "-n", ENV.make_jobs, "pytest", "--with-mpi", "--pyargs", "h5py"
+      system "mpirun", "-n", "2", "pytest", "--with-mpi", "--pyargs", "h5py"
     end
   end
 end
