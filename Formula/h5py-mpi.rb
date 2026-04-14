@@ -8,7 +8,7 @@ class H5pyMpi < Formula
 
   bottle do
     root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/h5py-mpi-3.16.0"
-    rebuild 2
+    rebuild 3
     sha256 cellar: :any, arm64_tahoe:   "bd8bfb20eff26ac0eccbd34e7f184e6b752ba7c6edc4f62315f0059e209fe6e7"
     sha256 cellar: :any, arm64_sequoia: "941cf93fc809b6f80dbba38a253574e4a3891c300d6f3b0f4a73d9baf5b43dd8"
     sha256 cellar: :any, arm64_sonoma:  "a4377fb8251cda4f7de095d4513f1f11a44b45121555fa84260300e8f9398eb9"
@@ -17,8 +17,8 @@ class H5pyMpi < Formula
   # alphabetical order
   depends_on "cython" => :build
   depends_on "ninja" => :build
-  depends_on "python@3.12" => [:build, :test] # receipe supports earlier python (>=3.10), but
-  depends_on "python@3.13" => [:build, :test] # github actions fail with too long builds
+  depends_on "python@3.12" => :build # receipe supports earlier python (>=3.10), but
+  depends_on "python@3.13" => :build # github actions fail with too long builds
   depends_on "python@3.14" => [:build, :test] # only 3.14 has mpi4py build
   depends_on "mpi4py" => :test # only on 3.14
   depends_on "numpy" => :test # only on 3.13, 3.14
@@ -80,7 +80,7 @@ class H5pyMpi < Formula
   test do
     # only test the latest python
     test_packages = %w[exceptiongroup iniconfig pluggy pygments pytest pytest-mpi typing-extensions]
-    ["python3.14"].each do |python|
+    ["python3.14"].each do |python| # mpi4py only installed for python3.14
       venv = virtualenv_create(testpath/"venv", python)
       test_packages.each do |r|
         venv.pip_install resource(r)
