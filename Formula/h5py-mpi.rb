@@ -9,9 +9,10 @@ class H5pyMpi < Formula
   bottle do
     root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/h5py-mpi-3.16.0"
     rebuild 3
-    sha256 cellar: :any, arm64_tahoe:   "bd8bfb20eff26ac0eccbd34e7f184e6b752ba7c6edc4f62315f0059e209fe6e7"
-    sha256 cellar: :any, arm64_sequoia: "941cf93fc809b6f80dbba38a253574e4a3891c300d6f3b0f4a73d9baf5b43dd8"
-    sha256 cellar: :any, arm64_sonoma:  "a4377fb8251cda4f7de095d4513f1f11a44b45121555fa84260300e8f9398eb9"
+    sha256 cellar: :any, arm64_tahoe:   "c26ed3caebd75a582941345e01a149432e4cb795891b9c094c7e391766a70943"
+    sha256 cellar: :any, arm64_sequoia: "793e9176b8465f2dd02bbd89be6d246acb1c45d7f9ac4100ecbd3002fb380a1e"
+    sha256 cellar: :any, arm64_sonoma:  "01d8759b54f142f7d26f2e9c05a6fc615172d24a85bbea4fd35ffe5b33c77c2b"
+    sha256               x86_64_linux:  "c47b8284fd454f83095e162c24342d0f3a9b6ad89cf702f593e006b5e66bbed0"
   end
 
   # alphabetical order
