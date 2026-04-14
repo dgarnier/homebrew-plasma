@@ -163,9 +163,7 @@ class Ascot5 < Formula
     # make sure ctypeslib2 finds the right clang library which matches the python clang we just built
     ENV["CLANG_LIBRARY_PATH"] = llvm.opt_lib.to_s
     ENV["CFLAGS"] = ENV["CFLAGS"] + " -I#{mpi.opt_include}"
-    if OS.linux?
-        ENV["CLANG2PY_ARGS"] = "-fopenmp -I" + omp.opt_include.to_s
-    end
+    ENV["CLANG2PY_ARGS"] = "-fopenmp -I" + omp.opt_include.to_s if OS.linux?
 
     # look in lib
     inreplace ".setcdllascot2py.py", "libpath = str(Path(__file__).absolute().parent.parent.parent)",
