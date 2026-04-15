@@ -19,6 +19,7 @@ class Ascot5 < Formula
   depends_on "cmake" => :build
   depends_on "cython" => :build
   depends_on "doxygen" => :build
+  depends_on "llvm@19" => :build
   depends_on "make" => :build
   depends_on "ninja" => :build # because its required by cmake sometimes
   depends_on "pandoc" => :build
@@ -26,7 +27,6 @@ class Ascot5 < Formula
   depends_on "h5py-mpi" => :no_linkage
   depends_on "hdf5-mpi"
   depends_on "libomp"
-  depends_on "llvm@19"
   depends_on "mpi4py" => :no_linkage
   depends_on "numpy" => :no_linkage
   depends_on "open-mpi"
@@ -183,7 +183,7 @@ class Ascot5 < Formula
     # bin.install Dir["bin/*"]
 
     # install the python module and link the shared library
-    venv = virtualenv_create(libexec, "python3.14")
+    venv = virtualenv_create(libexec, "python3.14", system_site_packages: true)
     # ENV.prepend_path "PATH", libexec/"bin"
     #
     # missing lots of dependencies in
@@ -191,6 +191,11 @@ class Ascot5 < Formula
     ENV["GEOS_CONFIG"] = "#{Formula["geos"].opt_bin}/geos-config"
     # for rtree
     ENV["SPATIALINDEX_C_LIBRARY"] = Formula["spatialindex"].opt_lib.to_s
+
+    # on_linux do
+    #  ENV["PYTHONPATH"].append_path = Formula["cython"].opt_libexec/Language::Python.site_packages(python).to_s
+    # end
+
     %w[unyt wurlitzer pyvista freeqdsk sympy mpmath xmlschema
        elementpath shapely trimesh rtree alphashape typing-extensions
        scooby cyclopts pooch].each do |r|
