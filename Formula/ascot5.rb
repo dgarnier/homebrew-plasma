@@ -182,25 +182,19 @@ class Ascot5 < Formula
 
     # bin.install Dir["bin/*"]
 
-    # install the python module and link the shared library
-    venv = virtualenv_create(libexec, "python3.14", system_site_packages: true)
-    # ENV.prepend_path "PATH", libexec/"bin"
-    #
+    python3 = "python3.14"
     # missing lots of dependencies in
     # for shapely
     ENV["GEOS_CONFIG"] = "#{Formula["geos"].opt_bin}/geos-config"
     # for rtree
     ENV["SPATIALINDEX_C_LIBRARY"] = Formula["spatialindex"].opt_lib.to_s
 
-    # on_linux do
-    #  ENV["PYTHONPATH"].append_path = Formula["cython"].opt_libexec/Language::Python.site_packages(python).to_s
-    # end
+    ENV.append_path "PYTHONPATH", Formula["cython"].opt_libexec/Language::Python.site_packages(python3)
+    # install the python module and link the shared library
+    ENV.prepend_path "PYTHONPATH", Formula["vtk-mpi"].opt_prefix/Language::Python.site_packages(python3)
+    venv = virtualenv_create(libexec, python3, system_site_packages: true)
+    venv.pip_install(resources.reject { |r| %w[clang ctypeslib2].include?(r.name) })
 
-    %w[unyt wurlitzer pyvista freeqdsk sympy mpmath xmlschema
-       elementpath shapely trimesh rtree alphashape typing-extensions
-       scooby cyclopts pooch].each do |r|
-      venv.pip_install resource(r)
-    end
     venv.pip_install_and_link buildpath
 
     bin.install "build/ascot5_main", "build/bbnbi5"
