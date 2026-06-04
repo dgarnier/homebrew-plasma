@@ -22,10 +22,10 @@ class Mdsplus < Formula
   end
 
   bottle do
-    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/mdsplus-alpha_release-7-158-5"
-    sha256 cellar: :any, arm64_tahoe:   "2a5830a1d0260041900ad5fdd4b5277b5ba7c7d8ec77e68c983e1d9cea007efa"
-    sha256 cellar: :any, arm64_sequoia: "a2b54c12ef8b385d1af7ce495e4fbba6416bc6b14a4791ba3498d33882e309bf"
-    sha256 cellar: :any, arm64_sonoma:  "2cfd5179eb97ed9dc81b656a851faaa0186589147435116535ec6f5ec5c0cb21"
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/mdsplus-alpha_release-7-159-0"
+    sha256 cellar: :any, arm64_tahoe:   "ea3eab8bdf7ce7f678ca24f6741b1a0c9a6edf0e541548c22d7bd24c3ccb28e7"
+    sha256 cellar: :any, arm64_sequoia: "005fb24e487b6b42e347cf3c31e41becc9341700a3cc3fa3820f0cb974eeb340"
+    sha256 cellar: :any, arm64_sonoma:  "b6ffdd75f9ccc60251b4a7c919478fd88c000c42f7c701852c7ec8414abd1022"
   end
 
   head do
