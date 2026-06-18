@@ -10,7 +10,7 @@ jobs:
   test-bot:
     strategy:
       matrix: # macos-15-intel is useless.. need macos-14-intel
-        os: [ubuntu-22.04, macos-14, macos-15, macos-26]
+        os: [ubuntu-24.04, macos-14, macos-15, macos-26]
     runs-on: ${{ matrix.os }}
     env:
       HOMEBREW_NO_SANDBOX_LINUX: 1
