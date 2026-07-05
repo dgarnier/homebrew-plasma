@@ -69,7 +69,7 @@ class VtkMpi < Formula
     # TODO: Consider adding a DSL for this or change how we handle Python's `expat` dependency
     if OS.mac? && MacOS.version < :sequoia
       env_vars = %w[CMAKE_PREFIX_PATH HOMEBREW_INCLUDE_PATHS HOMEBREW_LIBRARY_PATHS PATH PKG_CONFIG_PATH]
-      ENV.remove env_vars, /(^|:)#{Regexp.escape(Formula["expat"].opt_prefix)}[^:]*/
+      ENV.remove env_vars, /(^|:)#{Regexp.escape(formula_opt_prefix("expat"))}[^:]*/
       ENV.remove "HOMEBREW_DEPENDENCIES", "expat"
     end
 
@@ -92,13 +92,13 @@ class VtkMpi < Formula
       -DVTK_MODULE_ENABLE_VTK_InfovisBoostGraphAlgorithms:STRING=YES
       -DVTK_MODULE_ENABLE_VTK_RenderingFreeTypeFontConfig:STRING=YES
       -DVTK_MODULE_USE_EXTERNAL_VTK_cgns:BOOL=ON
-      -DCGNS_ROOT:PATH=#{Formula["cgns-mpi"].opt_prefix}
+      -DCGNS_ROOT:PATH=#{formula_opt_prefix("cgns-mpi")}
       -DVTK_MODULE_USE_EXTERNAL_VTK_doubleconversion:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_eigen:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_expat:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_freetype:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_hdf5:BOOL=ON
-      -DHDF5_ROOT:PATH=#{Formula["hdf5-mpi"].opt_prefix}
+      -DHDF5_ROOT:PATH=#{formula_opt_prefix("hdf5-mpi")}
       -DVTK_MODULE_USE_EXTERNAL_VTK_jpeg:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_jsoncpp:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_libharu:BOOL=ON
@@ -107,7 +107,7 @@ class VtkMpi < Formula
       -DVTK_MODULE_USE_EXTERNAL_VTK_lz4:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_lzma:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_netcdf:BOOL=ON
-      -DNETCDF_ROOT:PATH=#{Formula["netcdf-mpi"].opt_prefix}
+      -DNETCDF_ROOT:PATH=#{formula_opt_prefix("netcdf-mpi")}
       -DVTK_MODULE_USE_EXTERNAL_VTK_nlohmannjson:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_ogg:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_png:BOOL=ON

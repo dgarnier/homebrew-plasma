@@ -185,13 +185,13 @@ class Ascot5 < Formula
     python3 = "python3.14"
     # missing lots of dependencies in
     # for shapely
-    ENV["GEOS_CONFIG"] = "#{Formula["geos"].opt_bin}/geos-config"
+    ENV["GEOS_CONFIG"] = "#{formula_opt_bin("geos")}/geos-config"
     # for rtree
-    ENV["SPATIALINDEX_C_LIBRARY"] = Formula["spatialindex"].opt_lib.to_s
+    ENV["SPATIALINDEX_C_LIBRARY"] = formula_opt_lib("spatialindex")
 
-    ENV.append_path "PYTHONPATH", Formula["cython"].opt_libexec/Language::Python.site_packages(python3)
+    ENV.append_path "PYTHONPATH", formula_opt_libexec("cython")/Language::Python.site_packages(python3)
     # install the python module and link the shared library
-    ENV.prepend_path "PYTHONPATH", Formula["vtk-mpi"].opt_prefix/Language::Python.site_packages(python3)
+    ENV.prepend_path "PYTHONPATH", formula_opt_prefix("vtk-mpi")/Language::Python.site_packages(python3)
     venv = virtualenv_create(libexec, python3, system_site_packages: true)
     venv.pip_install(resources.reject { |r| %w[clang ctypeslib2].include?(r.name) })
 
