@@ -1,0 +1,63 @@
+name: Manual Brew Test Bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'The Pull Request number to test'
+        required: true
+        type: string
+      formula_name:
+        description: 'Specific formula name (e.g., my-app)'
+        required: true
+        type: string
+
+jobs:
+  test-bot:
+    strategy:
+      matrix: # macos-15-intel is useless.. need macos-14-intel
+        os: [ubuntu-24.04, macos-14, macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
+    env:
+      HOMEBREW_NO_SANDBOX_LINUX: 1
+
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+        with:
+          token: ${{ github.token }}
+
+      - name: Cache Homebrew Bundler RubyGems
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ matrix.os }}-rubygems-
+
+      # This checks out the exact PR head branch instead of the main branch
+      - name: Checkout Pull Request
+        run: |
+          git fetch origin pull/${{ github.event.inputs.pr_number }}/head:pr-${{ github.event.inputs.pr_number }}
+          git checkout pr-${{ github.event.inputs.pr_number }}
+
+      - name: Run brew test-bot syntax cache
+        run: brew test-bot --only-cleanup-before
+
+      - name: Run brew test-bot setup
+        run: brew test-bot --only-setup
+
+      - name: Run Syntax and Tap Audits
+        run: brew test-bot --only-tap-syntax
+
+      # Compiles, audits, and builds the bottle strictly for your specified formula
+      - name: Run Test Bot for Specific Formula
+        run: |
+          brew test-bot --only-formulae ${{ github.event.inputs.formula_name }}
+
+      - name: Upload Bottling Artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: bottles_${{ matrix.os }}
+          path: "*.bottle.*"
