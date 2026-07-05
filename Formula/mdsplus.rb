@@ -6,10 +6,10 @@ class Mdsplus < Formula
   license "MIT"
 
   stable do
-    url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-160-0.tar.gz"
+    url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-160-1.tar.gz"
     # required as build wont work with release tag
-    version "alpha_release-7-160-0"
-    sha256 "c25e72c2a1549ddefdd199c09c2204a3766be34b995835efda80bc3b1394fe51"
+    version "alpha_release-7-160-1"
+    sha256 "8079b64cafbcabf08f65b561d9c8b80ade04a90be119c13bf76f3b432f637a3a"
     patch :DATA
   end
 
@@ -89,7 +89,7 @@ class Mdsplus < Formula
       # up macOS SDK framework headers (e.g. Tk.framework) which can provide
       # incompatible X11/Xlib.h. d
       %W[
-        -DMotif_X11_INCLUDE_DIR=#{Formula["libx11"].opt_include}
+        -DMotif_X11_INCLUDE_DIR=#{formula_opt_include("libx11")}
         -DPLATFORM=macosx
       ]
     else
@@ -109,7 +109,7 @@ class Mdsplus < Formula
 
     # If the recommended HDF5 is not specifically disabled
     # this will allow the keg version to be found
-    ENV["HDF5_DIR"] = Formula["hdf5"].opt_prefix if build.with? "hdf5"
+    ENV["HDF5_DIR"] = formula_opt_prefix("hdf5") if build.with? "hdf5"
 
     # use installed installed java
     ENV["JAVA_HOME"] = Formula["openjdk"].libexec/"openjdk.jdk/Contents/Home" if OS.mac?
