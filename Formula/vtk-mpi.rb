@@ -5,6 +5,7 @@ class VtkMpi < Formula
   sha256 "cee64b98d270ff7302daf1ef13458dff5d5ac1ecb45d47723835f7f7d562c989"
   license "BSD-3-Clause"
   head "https://gitlab.kitware.com/vtk/vtk.git", branch: "master"
+  revision 3
 
   bottle do
     root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/vtk-mpi-9.5.2"
