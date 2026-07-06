@@ -13,12 +13,11 @@ class CgnsMpi < Formula
   end
 
   bottle do
-    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/cgns-mpi-4.5.1"
-    rebuild 1
-    sha256               arm64_tahoe:   "3652f854e5be3ab947b5e113be9d64fb215b6945763074c5ccddec8baf12bab8"
-    sha256               arm64_sequoia: "d2a63c94013e8b00d52612e6159048135ce62fb3b91a5de5c2d467437bed7dd0"
-    sha256               arm64_sonoma:  "f66c7145b4cc602ae7b9a2ff03f8ccb22394b96d6b23c890b8a661545a90a8ad"
-    sha256 cellar: :any, x86_64_linux:  "cd15b48b79369eaeed4f54ec9507da75becde10f7ce76a8eea4f827dc3a021d6"
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/cgns-mpi-4.5.2"
+    sha256               arm64_tahoe:   "0b9c6e0a60518b477e668406e5a961875bbfc13c79005ab0464e00f0c0cc51ae"
+    sha256               arm64_sequoia: "5fb2c00e81939960ae319a0e9a5acc1b580536d97ae479e793b20f47b0115a0c"
+    sha256               arm64_sonoma:  "aad60a83052be7333ecd1a12cefb68bacc6062621d2dfadc53a788a26ff357d7"
+    sha256 cellar: :any, x86_64_linux:  "593157b4a28c8e756f3fa25c1a0e27c7f72b445bae2657e3d471158770e87f11"
   end
 
   depends_on "cmake" => :build
