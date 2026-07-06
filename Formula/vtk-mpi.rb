@@ -8,11 +8,10 @@ class VtkMpi < Formula
   head "https://gitlab.kitware.com/vtk/vtk.git", branch: "master"
 
   bottle do
-    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/vtk-mpi-9.5.2"
-    sha256 cellar: :any,                 arm64_tahoe:   "e75e0b2811b90040503667594cb50fd59869345d99b2a9ca68f97979cb5c1fe5"
-    sha256 cellar: :any,                 arm64_sequoia: "b5f37a5fb23a756643289c6ef125f5367568f031c5bd2ff2f06c85c75075c186"
-    sha256 cellar: :any,                 arm64_sonoma:  "0b0a95daf13c65272a6e411a62c81da2067ae200c3f707bf496a897dea1507f8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c0628fa7f0dd920c658c2da35205e954cb2535725b6caed2b162ae62793549c0"
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/vtk-mpi-9.5.2_3"
+    sha256 cellar: :any, arm64_tahoe:   "16c7a2e15d55d1fbe79e1e3da6ffce45d06f2d4e5d7b295d39df92afe7b69c37"
+    sha256 cellar: :any, arm64_sequoia: "29d56fdcd631482643be51e578f8fe1875d3290f74e9f7065655862c5719cdce"
+    sha256 cellar: :any, arm64_sonoma:  "6954a8fe95974582919fe975395db8198f486cf3ac4916620dfc4e625378ccb2"
   end
 
   depends_on "cmake" => [:build, :test]
