@@ -11,9 +11,9 @@ class Ascot5 < Formula
 
   bottle do
     root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/ascot5-5.6.3"
-    sha256 cellar: :any, arm64_tahoe:   "61b8919f253e0ff504b4d86a0874ffe0a5206fd3ba607862826fffab26b6f553"
-    sha256 cellar: :any, arm64_sequoia: "7a1c2ef92d11800f70ad3dd7cf8d64e8b6d0a782a7e9847038faa77bdf330545"
-    sha256 cellar: :any, arm64_sonoma:  "aea3de01d8c8f6682fdf163b1b8a4530ae9461410323487e261ce8cea850e30b"
+    rebuild 1
+    sha256 cellar: :any, arm64_sequoia: "83015403a8c4b2519d8d5d9774ccb674b8e30f5f6fa2ec9d84f79bf792b63d7b"
+    sha256 cellar: :any, arm64_sonoma:  "b143b7a49b27a7a014ff50ca4e91c4f0760c465ea658c88ffe059b7fd194822b"
   end
 
   depends_on "cmake" => :build
