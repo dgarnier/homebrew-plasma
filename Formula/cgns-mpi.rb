@@ -1,8 +1,8 @@
 class CgnsMpi < Formula
   desc "CFD General Notation System"
   homepage "https://cgns.github.io/"
-  url "https://github.com/CGNS/CGNS/archive/refs/tags/v4.5.1.tar.gz"
-  sha256 "ae63b0098764803dd42b7b2a6487cbfb3c0ae7b22eb01a2570dbce49316ad279"
+  url "https://github.com/CGNS/CGNS/archive/refs/tags/v4.5.2.tar.gz"
+  sha256 "95075e1fd0b51d97b1b96b73ebe03b1a551fbcc9cd2b2b6f487ccccedcff5964"
   license "BSD-3-Clause"
   compatibility_version 1
   head "https://github.com/CGNS/CGNS.git", branch: "develop"
