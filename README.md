@@ -32,6 +32,11 @@ brew "<formula>"
 
 ## Development
 
+To check for new upstream versions do:
+```sh
+brew livecheck --tap dgarnier/plasma
+```
+
 To bump the version of these formulas do:
 ```sh
 brew bump --open-pr <formula>
