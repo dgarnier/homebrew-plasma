@@ -16,6 +16,14 @@ class Fidasim < Formula
     skip "No tagged releases since 2020; formula pins master commits"
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/fidasim-3.0.0.dev20260125"
+    sha256 cellar: :any, arm64_tahoe:   "c0b851476208c4a5a5fe70930ec4ec87e78aec9edd15a0f17e7b78b794b8d9da"
+    sha256 cellar: :any, arm64_sequoia: "1296275f7faa574075ab876fe073b38aec96d7c576019b7dfc6efb19c3629ffc"
+    sha256 cellar: :any, arm64_sonoma:  "1cc8b97f6c117efbdd0f67e1cec8ca5d8f1f8b208f582becb4b2c16a0051372c"
+    sha256 cellar: :any, x86_64_linux:  "1b034ccdbf4efef4e498c23e540ef13b1a0ff935fbd069ea359d17723c2848f9"
+  end
+
   depends_on "make" => :build
   depends_on "python@3.14" => :build # only to build the pure-python wheel
   depends_on "gcc" # gfortran must match the one hdf5-mpi was built with (.mod files)
