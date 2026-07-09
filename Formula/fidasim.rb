@@ -71,7 +71,7 @@ class Fidasim < Formula
       "HDF5_LIB=#{hdf5.opt_lib}",
       "HDF5_INCLUDE=#{hdf5.opt_include}",
       "HDF5_FLAGS=-L#{hdf5.opt_lib} -lhdf5_fortran -lhdf5_hl_fortran " \
-      "-lhdf5_hl -lhdf5 -lz -ldl -Wl,-rpath,#{hdf5.opt_lib}",
+      "-lhdf5_hl -lhdf5 -Wl,-rpath,#{hdf5.opt_lib}",
     ]
 
     # The makefile makes OpenMP and MPI mutually exclusive (USE_MPI=y forces
