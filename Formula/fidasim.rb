@@ -59,6 +59,9 @@ class Fidasim < Formula
     # Skip FIDASIM's `deps` target (it builds a vendored HDF5 1.8.16) and point
     # the build at hdf5-mpi instead. FIDASIM only uses the serial HDF5 API, so
     # parallel HDF5 links fine for both flavors.
+    # HDF5_FLAGS is overridden wholesale: the makefile's per-OS values use the
+    # pre-1.10 library name (-lhdf5hl_fortran) and, on Linux, static linking —
+    # which drags in hdf5-mpi's MPI symbols even for the non-MPI build.
     # CC/CXX are only sanity-checked by the makefile (all sources are Fortran),
     # but the check rejects Homebrew's `cc` shim, so name clang explicitly.
     common_args = [
@@ -67,11 +70,9 @@ class Fidasim < Formula
       "CXX=clang++",
       "HDF5_LIB=#{hdf5.opt_lib}",
       "HDF5_INCLUDE=#{hdf5.opt_include}",
+      "HDF5_FLAGS=-L#{hdf5.opt_lib} -lhdf5_fortran -lhdf5_hl_fortran " \
+      "-lhdf5_hl -lhdf5 -lz -ldl -Wl,-rpath,#{hdf5.opt_lib}",
     ]
-
-    # HDF5 renamed libhdf5hl_fortran to libhdf5_hl_fortran in 1.10; the
-    # makefile still links the 1.8-era name from its vendored HDF5.
-    inreplace "makefile", "-lhdf5hl_fortran", "-lhdf5_hl_fortran"
 
     # The makefile makes OpenMP and MPI mutually exclusive (USE_MPI=y forces
     # USE_OPENMP=n), so build twice and install both flavors of fidasim.
