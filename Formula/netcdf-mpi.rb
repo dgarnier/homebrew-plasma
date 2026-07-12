@@ -1,8 +1,8 @@
 class NetcdfMpi < Formula
   desc "Libraries and data formats for array-oriented scientific data"
   homepage "https://www.unidata.ucar.edu/software/netcdf/"
-  url "https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.10.0.tar.gz"
-  sha256 "ce160f9c1483b32d1ba8b7633d7984510259e4e439c48a218b95a023dc02fd4c"
+  url "https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.10.1.tar.gz"
+  sha256 "33c27231c478c3b35da7c7758fbdd02da1fe407abcb16ddfe195f69d164f930d"
   license "BSD-3-Clause"
   compatibility_version 1
   head "https://github.com/Unidata/netcdf-c.git", branch: "main"
