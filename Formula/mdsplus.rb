@@ -6,10 +6,10 @@ class Mdsplus < Formula
   license "MIT"
 
   stable do
-    url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-160-1.tar.gz"
+    url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-160-2.tar.gz"
     # required as build wont work with release tag
-    version "alpha_release-7-160-1"
-    sha256 "8079b64cafbcabf08f65b561d9c8b80ade04a90be119c13bf76f3b432f637a3a"
+    version "alpha_release-7-160-2"
+    sha256 "4d5490a57681e215cd6949d3bb81d63995a6a07efb7d2c8ca71b1e835dc69cee"
     patch :DATA
   end
 
