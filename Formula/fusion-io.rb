@@ -66,9 +66,18 @@ class FusionIo < Formula
     hdf5 = Formula["hdf5-mpi"]
     (testpath/"test.cpp").write <<~CPP
       #include <fusion_io.h>
+      #include <hdf5.h>
+      #include <iostream>
+
       int main() {
+        // Silence HDF5 error reporting by passing NULL for both the handler and client data
+        H5Eset_auto(H5E_DEFAULT, NULL, NULL);
+
         fio_source *src = nullptr;
         int ierr = fio_open_source(&src, FIO_M3DC1_SOURCE, "nonexistent.h5");
+        
+        std::cout << "Return code: " << ierr << std::endl;
+
         return ierr == FIO_SUCCESS ? 1 : 0; // opening a missing file must fail
       }
     CPP
