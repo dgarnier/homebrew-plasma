@@ -14,6 +14,8 @@ class FusionIo < Formula
   end
 
   depends_on "cmake" => :build
+  depends_on "h5py-mpi" => :test
+  depends_on "scipy" => :test
   depends_on "gcc"
   depends_on "hdf5-mpi"
   depends_on "open-mpi"
@@ -41,6 +43,7 @@ class FusionIo < Formula
               "target_link_libraries(fio_py PUBLIC fusionio::fusionio Python3::Module)"
 
     system "cmake", "-S", ".", "-B", "build",
+           "-DCMAKE_CXX_STANDARD=11",
            "-DCMAKE_C_COMPILER=mpicc",
            "-DCMAKE_CXX_COMPILER=mpicxx",
            "-DCMAKE_Fortran_COMPILER=mpif90",
