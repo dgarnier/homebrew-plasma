@@ -13,11 +13,11 @@ class NetcdfMpi < Formula
   end
 
   bottle do
-    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/netcdf-mpi-4.10.0"
-    sha256 cellar: :any,                 arm64_tahoe:   "6f953225923b4b8622802343b413544df785ff4d6cd650882f5221f0dc70c752"
-    sha256 cellar: :any,                 arm64_sequoia: "a48a518cc6cb53532bf4fbd8adb6cab1feb4b2d2510bf2d06cbc7d3d7cc647c0"
-    sha256 cellar: :any,                 arm64_sonoma:  "72f089dea76a709ecc587ca10a2b6f24e4f822dc741e9ccb81df6a1817ff88b5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4f32b9aa8b99e9ca02a40db1e6eed6fc4fd40843b5e386f5f9de940ff7104831"
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/netcdf-mpi-4.10.1"
+    sha256 cellar: :any, arm64_tahoe:   "c36721ff02804ad0e48dd784258981e941bf0878621ec30185891b5d48a9f8f6"
+    sha256 cellar: :any, arm64_sequoia: "2681422433bef077c489e52cae2a6250b592730c590c23cb7ebe682ca92ef6c4"
+    sha256 cellar: :any, arm64_sonoma:  "670e0fb399b909324961c707168062bf61b8fe0a13284ca41934d2242c6e29bd"
+    sha256 cellar: :any, x86_64_linux:  "4a478e5b5cf3a6067b3e683e3eb00e368e00d538286c471546b2d5d50ba01912"
   end
 
   depends_on "cmake" => :build
