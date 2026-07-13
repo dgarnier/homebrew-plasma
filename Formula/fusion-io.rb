@@ -75,7 +75,7 @@ class FusionIo < Formula
 
         fio_source *src = nullptr;
         int ierr = fio_open_source(&src, FIO_M3DC1_SOURCE, "nonexistent.h5");
-        
+      #{"  "}
         std::cout << "Return code: " << ierr << std::endl;
 
         return ierr == FIO_SUCCESS ? 1 : 0; // opening a missing file must fail
