@@ -19,6 +19,10 @@ class FusionIo < Formula
   depends_on "open-mpi"
   depends_on "python@3.14"
 
+  on_linux do
+    depends_on "openblas"
+  end
+
   def python3
     "python3.14"
   end
