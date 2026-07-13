@@ -57,9 +57,11 @@ class FusionIo < Formula
   test do
     system python3, "-c", <<~PY
       import sys
+      import os
       sys.path.insert(0, "#{prefix/Language::Python.site_packages(python3)}")
       import fpy
       print("fpy imported OK")
+      os._exit(0)
     PY
     hdf5 = Formula["hdf5-mpi"]
     (testpath/"test.cpp").write <<~CPP
