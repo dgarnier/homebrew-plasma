@@ -14,12 +14,13 @@ class Zoltan < Formula
 
   def install
     # -fPIC so the static library can be linked into shared libraries (PUMI).
+    ENV.append "LDFLAGS", "-lm" if OS.linux?
     mkdir "zoltan-build" do
       system "../configure", "--prefix=#{prefix}",
              "CC=mpicc",
              "CXX=mpicxx",
              "CFLAGS=-fPIC",
-             "CXXFLAGS=-fPIC"
+             "CXXFLAGS=-fPIC",
       system "make", "everything"
       system "make", "install"
     end
