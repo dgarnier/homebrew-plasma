@@ -10,6 +10,11 @@ class NetcdfFortranMpi < Formula
   depends_on "netcdf-mpi"
   depends_on "open-mpi"
 
+  on_macos do
+    depends_on "libaec"
+    depends_on "zstd"
+  end
+
   def install
     args = std_cmake_args + %w[-DENABLE_TESTS=OFF -DENABLE_DOXYGEN=OFF]
 
