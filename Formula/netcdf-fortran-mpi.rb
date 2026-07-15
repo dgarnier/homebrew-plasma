@@ -26,6 +26,8 @@ class NetcdfFortranMpi < Formula
     system "cmake", "--build", "build_static"
     lib.install "build_static/fortran/libnetcdff.a"
 
+    libexec.install lib/"libnetcdff.settings"
+
     # Remove shim paths
     inreplace [bin/"nf-config", lib/"pkgconfig/netcdf-fortran.pc"], Superenv.shims_path/ENV.cc, ENV.cc
   end
