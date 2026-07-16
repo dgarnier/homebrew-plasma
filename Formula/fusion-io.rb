@@ -52,6 +52,9 @@ class FusionIo < Formula
            *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
+
+    # Rename the trace binary to avoid naming conflicts
+    mv bin/"trace", bin/"m3dc1_trace"
   end
 
   test do
@@ -84,7 +87,9 @@ class FusionIo < Formula
     system "mpicxx", "test.cpp", "-std=c++11",
            "-I#{include}", "-I#{hdf5.opt_include}",
            "-L#{lib}", "-lfusionio_fusionio", "-lfusionio_m3dc1",
-           "-L#{hdf5.opt_lib}", "-lhdf5", "-o", "test"
+           "-L#{hdf5.opt_lib}", "-lhdf5",
+           "-Wl,-rpath,#{lib}", "-Wl,-rpath,#{hdf5.opt_lib}",
+           "-o", "test"
     system "./test"
   end
 end
