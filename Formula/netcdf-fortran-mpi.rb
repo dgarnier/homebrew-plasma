@@ -16,8 +16,8 @@ class NetcdfFortranMpi < Formula
   end
 
   def install
-    args = std_cmake_args + %w[-DENABLE_TESTS=OFF -DENABLE_DOXYGEN=OFF
-                               -DCMAKE_SHARED_LINKER_FLAGS="-Wl,-undefined,dynamic_lookup -Wl,-twolevel_namespace"]
+    args = std_cmake_args + %w[-DENABLE_TESTS=OFF -DENABLE_DOXYGEN=OFF]
+    args += %w[-DCMAKE_SHARED_LINKER_FLAGS="-Wl,-undefined,dynamic_lookup,-twolevel_namespace"] if OS.mac?
 
     system "cmake", "-S", ".", "-B", "build_shared", *args, "-DBUILD_SHARED_LIBS=ON"
     system "cmake", "--build", "build_shared"
