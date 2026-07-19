@@ -13,6 +13,14 @@ class FusionIo < Formula
     skip "no tagged upstream releases; pinned to a master commit"
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/fusion-io-1.0.0.dev20260508"
+    sha256 cellar: :any, arm64_tahoe:   "db025a4cd07f39349bb640e47bcdcb8f62df1bd5a5f427d409846e1e704f74cd"
+    sha256 cellar: :any, arm64_sequoia: "dfe1f48664d79b192fab9f9391b5fcf8952f699da4a4f9f9baa9d6d7d00ebdf6"
+    sha256 cellar: :any, arm64_sonoma:  "d0906002225d50b25ae0d9ef77dea53bc681b93a7b021e12dbed2b520b8040aa"
+    sha256 cellar: :any, x86_64_linux:  "8a194fac139d17617d99ac5bea15c300f4603157f92f465e36c546031fa733dd"
+  end
+
   depends_on "cmake" => :build
   depends_on "h5py-mpi" => :test
   depends_on "scipy" => :test
