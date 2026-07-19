@@ -82,12 +82,12 @@ class FusionIo < Formula
         return (ierr == FIO_SUCCESS) ? 1 : 0; // opening a missing file must fail
       }
     CPP
-    system "mpicxx", "test.cpp", "-std=c++11",
+    system "g++", "test.cpp", "-std=c++11",
            "-I#{include}", "-I#{hdf5.opt_include}",
            "-L#{lib}", "-lfusionio_fusionio", "-lfusionio_m3dc1",
            "-L#{hdf5.opt_lib}", "-lhdf5",
            "-Wl,-rpath,#{lib}", "-Wl,-rpath,#{hdf5.opt_lib}",
            "-o", "test"
-    system "mpirun", "-np", "1", "./test"
+    system "./test"
   end
 end
