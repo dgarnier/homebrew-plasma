@@ -1,3 +1,4 @@
 [
+  "netcdf-mpi",
   "netcdf-fortran-mpi"
 ]

@@ -38,6 +38,7 @@ class NetcdfMpi < Formula
 
   def install
     args = %w[-DNETCDF_ENABLE_TESTS=OFF -DNETCDF_ENABLE_HDF5=ON -DNETCDF_ENABLE_DOXYGEN=OFF]
+    args += %w[-DCMAKE_SHARED_LINKER_FLAGS="-Wl,-undefined,dynamic_lookup,-twolevel_namespace"] if OS.mac?
     # Fixes "relocation R_X86_64_PC32 against symbol `stderr@@GLIBC_2.2.5' can not be used" on Linux
     args << "-DCMAKE_POSITION_INDEPENDENT_CODE=ON" if OS.linux?
     args << "-DNETCDF_ENABLE_PARALLEL_TESTS=ON"
