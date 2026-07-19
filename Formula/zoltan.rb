@@ -20,7 +20,7 @@ class Zoltan < Formula
              "CC=mpicc",
              "CXX=mpicxx",
              "CFLAGS=-fPIC",
-             "CXXFLAGS=-fPIC",
+             "CXXFLAGS=-fPIC"
       system "make", "everything"
       system "make", "install"
     end
