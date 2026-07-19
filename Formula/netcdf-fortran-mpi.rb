@@ -5,6 +5,14 @@ class NetcdfFortranMpi < Formula
   sha256 "b9de820c4823faa5b4e1cd9ee82dd7c57acad105ebd8f6ae36b0244105518655"
   license "NetCDF"
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/netcdf-fortran-mpi-4.6.3"
+    sha256 cellar: :any, arm64_tahoe:   "4b762edf333ea1508f2c8349323e53dae0705faa4c52121d26fca3ba89c63317"
+    sha256 cellar: :any, arm64_sequoia: "6caa7ddb8e76a325742caf7ff46e06e00caeb21b1837239c676e9ceea95d6fa5"
+    sha256 cellar: :any, arm64_sonoma:  "d5ed61e98afd8f60d1492bb5de835eb1c7f90c1daea17fe5be0af46ec33cede0"
+    sha256 cellar: :any, x86_64_linux:  "b2f78f20f3e1cc6477f8f6c1b542a7e425cc30c097770b4fb58c195e40ae67f2"
+  end
+
   depends_on "cmake" => :build
   depends_on "gcc" # for gfortran
   depends_on "netcdf-mpi"
