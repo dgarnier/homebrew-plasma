@@ -14,14 +14,17 @@ class Zoltan < Formula
 
   def install
     # -fPIC so the static library can be linked into shared libraries (PUMI).
-    ENV.append "LIBS", "-lm" if OS.linux?
     mkdir "zoltan-build" do
       system "../configure", "--prefix=#{prefix}",
              "CC=mpicc",
              "CXX=mpicxx",
              "CFLAGS=-fPIC",
              "CXXFLAGS=-fPIC"
-      system "make", "everything"
+      # Build/install only the library + headers -- all that PUMI and M3D-C1
+      # link against (-lzoltan). `make everything` also builds the bundled
+      # example programs, whose Makefiles omit $(LIBS)/-lm and fail to link on
+      # Linux's strict linker (macOS hides this: libm lives in libSystem).
+      system "make"
       system "make", "install"
     end
   end
