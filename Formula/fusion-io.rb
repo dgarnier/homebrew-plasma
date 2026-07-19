@@ -71,6 +71,7 @@ class FusionIo < Formula
       #include <fusion_io.h>
       #include <hdf5.h>
       #include <iostream>
+      #include <mpi.h>
 
       int main(int argc, char** argv) {
         // Silence HDF5 error reporting by passing NULL for both the handler and client data
@@ -82,7 +83,8 @@ class FusionIo < Formula
         std::cout << "Return code: " << ierr << std::endl;
         int ret = ierr == FIO_SUCCESS ? 1 : 0; // opening a missing file must fail
         MPI_Finalize();
-        return ret;
+        std::_Exit(ret);
+        //return ret;
       }
     CPP
     system "mpicxx", "test.cpp", "-std=c++11",
