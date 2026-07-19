@@ -78,10 +78,8 @@ class FusionIo < Formula
 
         fio_source *src = nullptr;
         int ierr = fio_open_source(&src, FIO_M3DC1_SOURCE, "nonexistent.h5");
-      #{"  "}
         std::cout << "Return code: " << ierr << std::endl;
-
-        return ierr == FIO_SUCCESS ? 1 : 0; // opening a missing file must fail
+        return (ierr == FIO_SUCCESS) ? 1 : 0; // opening a missing file must fail
       }
     CPP
     system "mpicxx", "test.cpp", "-std=c++11",
@@ -90,6 +88,6 @@ class FusionIo < Formula
            "-L#{hdf5.opt_lib}", "-lhdf5",
            "-Wl,-rpath,#{lib}", "-Wl,-rpath,#{hdf5.opt_lib}",
            "-o", "test"
-    system "./test"
+    system "mpirun", "-np", "1", "./test"
   end
 end
