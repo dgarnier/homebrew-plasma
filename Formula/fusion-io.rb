@@ -72,22 +72,25 @@ class FusionIo < Formula
       #include <hdf5.h>
       #include <iostream>
 
-      int main() {
+      int main(int argc, char** argv) {
         // Silence HDF5 error reporting by passing NULL for both the handler and client data
+        MPI_Init(&argc, &argv);
         H5Eset_auto(H5E_DEFAULT, NULL, NULL);
 
         fio_source *src = nullptr;
         int ierr = fio_open_source(&src, FIO_M3DC1_SOURCE, "nonexistent.h5");
         std::cout << "Return code: " << ierr << std::endl;
-        return (ierr == FIO_SUCCESS) ? 1 : 0; // opening a missing file must fail
+        int ret = ierr == FIO_SUCCESS ? 1 : 0; // opening a missing file must fail
+        MPI_Finalize();
+        return ret;
       }
     CPP
-    system ENV.cxx.to_s, "test.cpp", "-std=c++11",
+    system "mpicxx", "test.cpp", "-std=c++11",
            "-I#{include}", "-I#{hdf5.opt_include}",
            "-L#{lib}", "-lfusionio_fusionio", "-lfusionio_m3dc1",
            "-L#{hdf5.opt_lib}", "-lhdf5",
            "-Wl,-rpath,#{lib}", "-Wl,-rpath,#{hdf5.opt_lib}",
            "-o", "test"
-    system "./test"
+    system "mpirun", "-np", "1", "./test"
   end
 end
