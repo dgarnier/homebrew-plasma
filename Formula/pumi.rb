@@ -14,12 +14,14 @@ class Pumi < Formula
 
   depends_on "cmake" => :build
   depends_on "dgarnier/plasma/zoltan"
+  depends_on "metis"
   depends_on "open-mpi"
 
   def install
     # Our Zoltan is built without ParMETIS (graph partitioning falls back to
     # Zoltan's built-in PHG), so drop the hard ParMETIS requirement.
     inreplace "cmake/FindZoltan.cmake", "find_package(Parmetis MODULE REQUIRED)", ""
+    ENV.append "LDFLAGS", "-lm" if OS.linux?
 
     system "cmake", "-S", ".", "-B", "build",
            "-DCMAKE_C_COMPILER=mpicc",
@@ -59,9 +61,11 @@ class Pumi < Formula
       }
     CPP
     zoltan = Formula["dgarnier/plasma/zoltan"]
-    system "mpicxx", "test.cc", "-std=c++11", "-I#{include}", "-L#{lib}",
-           "-lmds", "-lapf", "-lgmi", "-lpcu", "-llion", "-lmth",
-           "-L#{zoltan.opt_lib}", "-o", "test"
+    comp_args = ["-I#{include}", "-L#{lib}", "-L#{zoltan.opt_lib}",
+                 "-lmds", "-lapf", "-lgmi", "-lpcu", "-llion", "-lmth",
+                 "-std=c++11"]
+    comp_args << "-lm" if OS.linux?
+    system "mpicxx", "test.cc", "-o", "test", *comp_args
     system "mpirun", "-np", "1", "./test"
   end
 end
