@@ -10,6 +10,14 @@ class Zoltan < Formula
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/zoltan-3.901"
+    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "bb04d968f5d8374fd921ba1ed61b32b9a05e0d3c861a43916d217b56dbfbd8a3"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "72059af0cb1cba63276c96eca0c2ef1101f2e374fc5afef2a4a276055e60f7cb"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "3220bbe9d2d15600e332650e76f37123c605b9336f4a1d538485a3fd160da096"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4c16455811c2c243800b567d1af893cd9adce89c03584195c3f224553e5fbfd9"
+  end
+
   depends_on "open-mpi"
 
   def install
