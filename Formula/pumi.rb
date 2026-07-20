@@ -12,6 +12,14 @@ class Pumi < Formula
     regex(/^v?(2\.\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/pumi-2.2.9"
+    sha256 cellar: :any, arm64_tahoe:   "5efe2009a376b6364b8e1a283c5138aae9e62943e9d5f97bdd9b03c8a70e52ee"
+    sha256 cellar: :any, arm64_sequoia: "d835f14580ccf5857577a961f3d593617fcaa01bc4082948d79d97ec85f04930"
+    sha256 cellar: :any, arm64_sonoma:  "85768172499d89d04e27ac992eda9565670ff1cb742a2b88a3ddcf50951d31cc"
+    sha256 cellar: :any, x86_64_linux:  "81c1bd4432393944f55863dd2181cda301e3998d0c80893cd1a4de1e3b4c58f5"
+  end
+
   depends_on "cmake" => :build
   depends_on "dgarnier/plasma/zoltan"
   depends_on "metis"
