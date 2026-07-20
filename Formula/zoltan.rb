@@ -51,7 +51,9 @@ class Zoltan < Formula
         return 0;
       }
     C
-    system "mpicc", "test.c", "-I#{include}", "-L#{lib}", "-lzoltan", "-o", "test"
+    comp_args = ["-I#{include}", "-L#{lib}", "-lzoltan"]
+    comp_args << "-lm" if OS.linux?
+    system "mpicc", "test.c", "-o", "test", *comp_args
     system "mpirun", "-np", "2", "./test"
   end
 end
