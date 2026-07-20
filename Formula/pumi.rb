@@ -63,7 +63,7 @@ class Pumi < Formula
     zoltan = Formula["dgarnier/plasma/zoltan"]
     comp_args = ["-I#{include}", "-L#{lib}", "-L#{zoltan.opt_lib}",
                  "-lmds", "-lapf", "-lgmi", "-lpcu", "-llion", "-lmth",
-                 "-std=c++11"]
+                 "-std=c++11", "-Wl,-rpath,#{lib}"]
     comp_args << "-lm" if OS.linux?
     system "mpicxx", "test.cc", "-o", "test", *comp_args
     system "mpirun", "-np", "1", "./test"
