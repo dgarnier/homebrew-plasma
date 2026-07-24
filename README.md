@@ -60,9 +60,11 @@ Supporting formulae added for this stack:
   system, or build simple structured meshes with the `pumi` utilities
   (`mkmodel`, `split`, `zsplit`) and M3D-C1's `create_mesh.sh` / `part_mesh.sh`.
 - **No distributed direct solves.** homebrew-core's PETSc has no MUMPS or
-  SuperLU_dist, so use PETSc's native LU / UMFPACK
-  (`-pc_factor_mat_solver_type petsc`) instead of the `superlu_dist` / `mumps`
-  settings in M3D-C1's stock options files.
+  SuperLU_dist. M3D-C1's 2D matrices are `MATMPIAIJ`, which the built-in
+  `petsc` LU can't factor directly, so wrap it in a redundant PC
+  (`-pc_type redundant -redundant_pc_type lu -redundant_pc_factor_mat_solver_type petsc`)
+  instead of the `superlu_dist` / `mumps` settings in M3D-C1's stock options
+  files.
 
 ### Running the regression tests
 
@@ -74,7 +76,8 @@ binaries, e.g. KPRAD_2D on a single rank:
 cd $(mktemp -d)
 cp -r "$(brew --prefix m3dc1)/share/m3dc1/regtest/KPRAD_2D/base/." .
 cp analytic-2K0.smb part0.smb   # m3dc1 expects part<rank>.smb
-mpirun -np 1 m3dc1_2d -pc_factor_mat_solver_type petsc
+mpirun -np 1 m3dc1_2d -pc_type redundant -redundant_pc_type lu \
+  -redundant_pc_factor_mat_solver_type petsc
 ```
 
 ## Documentation

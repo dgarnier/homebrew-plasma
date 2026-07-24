@@ -220,9 +220,11 @@ class M3dc1 < Formula
         #{opt_pkgshare}/regtest
 
       Homebrew's petsc has no MUMPS/SuperLU_dist, so distributed direct solves
-      are unavailable. For serial or per-rank block solves use PETSc's native
-      LU or UMFPACK, e.g.:
-        -pc_factor_mat_solver_type petsc
+      are unavailable. M3D-C1's 2D matrices are MATMPIAIJ, which the built-in
+      "petsc" LU cannot factor directly; wrap it in a redundant PC so each rank
+      factors a sequential copy with the native LU/UMFPACK:
+        -pc_type redundant -redundant_pc_type lu \\
+          -redundant_pc_factor_mat_solver_type petsc
       instead of the superlu_dist/mumps settings in M3D-C1's stock options files.
     EOS
   end
@@ -239,8 +241,14 @@ class M3dc1 < Formula
     cp testpath/"analytic-2K0.smb", testpath/"part0.smb"
     # Shorten to a single time step for a smoke test.
     inreplace testpath/"C1input", /ntimemax\s*=\s*\d+/, "ntimemax = 1"
+    # M3D-C1's 2D matrices are MATMPIAIJ on MPI_COMM_WORLD, which PETSc's
+    # built-in "petsc" LU can't factor (seqaij only). Wrap it in a redundant
+    # PC so the single rank factors a seqaij copy with the built-in LU --
+    # homebrew-core petsc has no parallel direct solver (superlu_dist/mumps).
     system "mpirun", *np_args, bin/"m3dc1_2d",
-           "-pc_factor_mat_solver_type", "petsc",
+           "-pc_type", "redundant",
+           "-redundant_pc_type", "lu",
+           "-redundant_pc_factor_mat_solver_type", "petsc",
            "-options_left", "no"
     assert_path_exists testpath/"C1.h5"
   end
