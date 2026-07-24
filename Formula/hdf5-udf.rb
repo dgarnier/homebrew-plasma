@@ -13,6 +13,7 @@ class Hdf5Udf < Formula
   end
 
   # alphabetical order
+  depends_on "cmake" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
   depends_on "pkgconf" => :build
@@ -26,6 +27,10 @@ class Hdf5Udf < Formula
   # `dependency('python3')` resolves to meson's own Python via sysconfig, and
   # the build sandbox only permits headers from a declared dependency.
   depends_on "python@3.14"
+
+  on_linux do
+    depends_on "libseccomp"
+  end
 
   def install
     # Enable the Python, Lua and C/C++ backends as recommended by upstream's
