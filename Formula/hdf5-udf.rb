@@ -97,7 +97,7 @@ class Hdf5Udf < Formula
     # $HOME/Library/HDF5-UDF; point HOME at the sandbox and pre-create the
     # (non-recursively created) parent directory.
     ENV["HOME"] = testpath
-    keypath = macOS ? testpath/"Library" : testpath/".config"
+    keypath = OS.mac? ? testpath/"Library" : testpath/".config"
     keypath.mkpath
 
     # The tool needs to locate its own filter plugin both when embedding the
