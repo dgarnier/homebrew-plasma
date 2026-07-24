@@ -24,6 +24,8 @@ class M3dc1 < Formula
   depends_on "open-mpi"
   depends_on "petsc"
 
+  uses_from_macos "zlib" # actually will link Accelerate framework and MacOS Blas
+
   on_linux do
     depends_on "openblas"
   end
@@ -129,7 +131,7 @@ class M3dc1 < Formula
     hdf5 = formula_opt_prefix("hdf5-mpi")
     fftw = formula_opt_prefix("fftw")
     gsl = formula_opt_prefix("gsl")
-    openblas = formula_opt_prefix("openblas")
+    openblas = formula_opt_prefix("openblas") if OS.linux?
     metis = formula_opt_prefix("metis")
 
     (buildpath/"unstructured/brew.mk").write <<~MK
@@ -175,7 +177,7 @@ class M3dc1 < Formula
         -L#{zoltan}/lib -lzoltan \\
         -L#{metis}/lib -lmetis \\
         -L#{gsl}/lib -lgsl -lgslcblas \\
-        -L#{openblas}/lib -lopenblas \\
+        #{OS.linux? ? "-L#{openblas}/lib -lopenblas" : "-framework Accelerate"} \\
         #{OS.mac? ? "-lc++" : "-lstdc++"}
 
       LIBS = $(SCOREC_LIB) \\
