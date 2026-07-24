@@ -25,8 +25,6 @@ class M3dc1Complex < Formula
   depends_on "open-mpi"
   depends_on "petsc-complex"
 
-  uses_from_macos "zlib" # actually will link Accelerate framework and MacOS Blas
-
   on_linux do
     depends_on "openblas"
   end
