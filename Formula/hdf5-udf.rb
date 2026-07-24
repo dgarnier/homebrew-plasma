@@ -12,6 +12,14 @@ class Hdf5Udf < Formula
     skip "pinned to a default-branch commit ahead of the last tagged release"
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/hdf5-udf-2.1.0.dev20230320"
+    sha256 cellar: :any, arm64_tahoe:   "c908b277adca2fe1362d3c840d3b5aa6476cfa3a1de5df0d5cd75f668cf525b2"
+    sha256 cellar: :any, arm64_sequoia: "d1049286bc3fbf058e4b1a0990a23357de4f49446e10230f15d4ada797b50ee8"
+    sha256 cellar: :any, arm64_sonoma:  "34356e25a6005eb944d2a17bdde2a23b3c3dcbbec2d7e9d70963c513ef126f35"
+    sha256               x86_64_linux:  "05a3bc55907afe52ded802669aaa04e230cd8b7f5abaf3a4d2da460a8b54b60e"
+  end
+
   # alphabetical order
   depends_on "cmake" => :build
   depends_on "meson" => :build
