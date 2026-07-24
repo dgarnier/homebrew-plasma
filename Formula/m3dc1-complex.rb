@@ -62,7 +62,11 @@ class M3dc1Complex < Formula
            "-DCMAKE_CXX_COMPILER=mpicxx",
            "-DCMAKE_Fortran_COMPILER=mpif90",
            "-DCMAKE_C_FLAGS=#{cflags}",
-           "-DCMAKE_CXX_FLAGS=#{cflags}",
+           # m3dc1_scorec sets no C++ standard; the macos-14 runner's clang
+           # defaults to a pre-C++11 mode that rejects m3dc1_scorec's nested
+           # templates (`> >`). Pin C++11 to match how pumi (SCOREC 2.2.x) is
+           # built.
+           "-DCMAKE_CXX_FLAGS=#{cflags} -std=c++11",
            "-DCMAKE_Fortran_FLAGS=-fPIC -fallow-argument-mismatch",
            "-DSCOREC_INCLUDE_DIR=#{formula_opt_include("dgarnier/plasma/pumi")}",
            "-DSCOREC_LIB_DIR=#{formula_opt_lib("dgarnier/plasma/pumi")}",
@@ -167,7 +171,7 @@ class M3dc1Complex < Formula
       	$(CC)  $(CCOPTS) $(INCLUDE) $< -o $@
 
       %.o : %.cpp
-      	$(CPP) $(CCOPTS) $(INCLUDE) $< -o $@
+      	$(CPP) $(CCOPTS) -std=c++11 $(INCLUDE) $< -o $@
 
       %.o: %.f
       	$(F77) $(F77OPTS) $(INCLUDE) $< -o $@
