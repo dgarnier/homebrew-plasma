@@ -221,11 +221,11 @@ class M3dc1 < Formula
 
       Homebrew's petsc has no MUMPS/SuperLU_dist, so distributed direct solves
       are unavailable. M3D-C1's 2D matrices are MATMPIAIJ, which the built-in
-      "petsc" LU cannot factor directly; wrap it in a redundant PC so each rank
-      factors a sequential copy with the native LU/UMFPACK:
-        -pc_type redundant -redundant_pc_type lu \\
-          -redundant_pc_factor_mat_solver_type petsc
+      "petsc" LU cannot factor directly; use block-Jacobi with an LU subsolve
+      so each rank factors its (seqaij) diagonal block with the native LU:
+        -pc_type bjacobi -sub_pc_type lu -sub_pc_factor_mat_solver_type petsc
       instead of the superlu_dist/mumps settings in M3D-C1's stock options files.
+      At -np 1 the single block is the whole matrix, so this is an exact solve.
     EOS
   end
 
@@ -242,13 +242,15 @@ class M3dc1 < Formula
     # Shorten to a single time step for a smoke test.
     inreplace testpath/"C1input", /ntimemax\s*=\s*\d+/, "ntimemax = 1"
     # M3D-C1's 2D matrices are MATMPIAIJ on MPI_COMM_WORLD, which PETSc's
-    # built-in "petsc" LU can't factor (seqaij only). Wrap it in a redundant
-    # PC so the single rank factors a seqaij copy with the built-in LU --
-    # homebrew-core petsc has no parallel direct solver (superlu_dist/mumps).
+    # built-in "petsc" LU can't factor (seqaij only), and homebrew-core petsc
+    # has no parallel direct solver (superlu_dist/mumps). Use block-Jacobi with
+    # an LU subsolve: block-Jacobi's per-rank diagonal block is seqaij, so the
+    # built-in LU factors it. At -np 1 that block is the whole matrix, giving an
+    # exact direct solve.
     system "mpirun", *np_args, bin/"m3dc1_2d",
-           "-pc_type", "redundant",
-           "-redundant_pc_type", "lu",
-           "-redundant_pc_factor_mat_solver_type", "petsc",
+           "-pc_type", "bjacobi",
+           "-sub_pc_type", "lu",
+           "-sub_pc_factor_mat_solver_type", "petsc",
            "-options_left", "no"
     assert_path_exists testpath/"C1.h5"
   end

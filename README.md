@@ -61,10 +61,11 @@ Supporting formulae added for this stack:
   (`mkmodel`, `split`, `zsplit`) and M3D-C1's `create_mesh.sh` / `part_mesh.sh`.
 - **No distributed direct solves.** homebrew-core's PETSc has no MUMPS or
   SuperLU_dist. M3D-C1's 2D matrices are `MATMPIAIJ`, which the built-in
-  `petsc` LU can't factor directly, so wrap it in a redundant PC
-  (`-pc_type redundant -redundant_pc_type lu -redundant_pc_factor_mat_solver_type petsc`)
-  instead of the `superlu_dist` / `mumps` settings in M3D-C1's stock options
-  files.
+  `petsc` LU can't factor directly, so use block-Jacobi with an LU subsolve
+  (`-pc_type bjacobi -sub_pc_type lu -sub_pc_factor_mat_solver_type petsc`) —
+  each rank factors its `seqaij` diagonal block with the native LU (at `-np 1`
+  the single block is the whole matrix, i.e. an exact solve) — instead of the
+  `superlu_dist` / `mumps` settings in M3D-C1's stock options files.
 
 ### Running the regression tests
 
@@ -76,8 +77,8 @@ binaries, e.g. KPRAD_2D on a single rank:
 cd $(mktemp -d)
 cp -r "$(brew --prefix m3dc1)/share/m3dc1/regtest/KPRAD_2D/base/." .
 cp analytic-2K0.smb part0.smb   # m3dc1 expects part<rank>.smb
-mpirun -np 1 m3dc1_2d -pc_type redundant -redundant_pc_type lu \
-  -redundant_pc_factor_mat_solver_type petsc
+mpirun -np 1 m3dc1_2d -pc_type bjacobi -sub_pc_type lu \
+  -sub_pc_factor_mat_solver_type petsc
 ```
 
 ## Documentation
