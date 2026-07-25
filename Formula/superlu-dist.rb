@@ -1,6 +1,8 @@
 class SuperluDist < Formula
   desc "Distributed-memory (MPI) direct solver for large sparse linear systems"
-  homepage "https://portal.nersc.gov/project/sparse/superlu/"
+  # The canonical NERSC project page (portal.nersc.gov/project/sparse/superlu)
+  # is frequently unreachable, which fails `brew audit --online`.
+  homepage "https://github.com/xiaoyeli/superlu_dist"
   url "https://github.com/xiaoyeli/superlu_dist/archive/refs/tags/v9.2.1.tar.gz"
   sha256 "c80a1c2edaaa451ee9a54e005e5f3f56dc55cabe2b0a8d7acf5a1447a648157a"
   license "BSD-3-Clause"
@@ -106,7 +108,7 @@ class SuperluDist < Formula
       }
     C
     system "mpicc", "test.c", "-I#{include}", "-L#{lib}",
-           "-lsuperlu_dist", "-o", "test"
+           "-lsuperlu_dist", "-Wl,-rpath,#{lib}", "-o", "test"
     assert_match "x=1.0000 1.0000", shell_output("mpirun -np 1 ./test")
   end
 end
