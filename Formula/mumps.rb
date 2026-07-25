@@ -10,6 +10,14 @@ class Mumps < Formula
     regex(/href=.*?MUMPS[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/mumps-5.9.1"
+    sha256 cellar: :any, arm64_tahoe:   "7e6f510a877fa175775ba8b7338b940e0f4b228bc97bd0c705fde4744319d038"
+    sha256 cellar: :any, arm64_sequoia: "1d92245e0544a1c9c6864f2773389bb50dd63b01d0cb9e42f46451b627be7f02"
+    sha256 cellar: :any, arm64_sonoma:  "751d15f8dbb705615588a57a71b3df38677e1f70d393c9f2d004990813ad73fa"
+    sha256 cellar: :any, x86_64_linux:  "7dc216f9108ab010118b811da2158b8021166a2b1fefae71b0bf89860770280b"
+  end
+
   depends_on "gcc" # for gfortran
   depends_on "metis"
   depends_on "open-mpi"
