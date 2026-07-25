@@ -10,6 +10,14 @@ class PetscM3dc1 < Formula
     regex(/href=.*?petsc[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/petsc-m3dc1-3.24.6"
+    sha256 arm64_tahoe:   "704463f81853fdc2baf85eed886c9e33d56c1a1f0a3921743b2a98dad1c37973"
+    sha256 arm64_sequoia: "293d720a5a2b715274e2c42ef2f6d25a3ec0d19f75b65674dc5307824a1c7160"
+    sha256 arm64_sonoma:  "87b066f9ee5d16bde92104e1b17b5773aee6f0a6abab78dbaa7cfa718b7f068b"
+    sha256 x86_64_linux:  "2a312c903566a5fcb68eb328dc07f73e0a942f0e222699ff91832ba5969e0a87"
+  end
+
   # Unlike homebrew-core's petsc/petsc-complex, this build includes the
   # parallel direct solvers M3D-C1 expects (MUMPS, SuperLU_DIST). Keg-only so
   # it can coexist with core petsc, core petsc-complex and its own complex
