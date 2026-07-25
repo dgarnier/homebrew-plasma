@@ -19,9 +19,9 @@ IMAGE="homebrew-plasma-test:${PLATFORM##*/}"
 build_args=()
 [[ -n "${REBUILD:-}" ]] && build_args+=(--no-cache)
 
-docker build --platform "$PLATFORM" -t "$IMAGE" \
-  "${build_args[@]}" "$TAP_DIR/docker"
+docker build --platform "${PLATFORM}" -t "${IMAGE}" \
+  "${build_args[@]}" "${TAP_DIR}/docker"
 
-exec docker run --rm -it --platform "$PLATFORM" \
-  -v "$TAP_DIR:/tap:ro" \
-  "$IMAGE" "$@"
+exec docker run --rm -it --platform "${PLATFORM}" \
+  -v "${TAP_DIR}:/tap:ro" \
+  "${IMAGE}" "$@"
