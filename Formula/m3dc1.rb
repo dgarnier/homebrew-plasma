@@ -162,15 +162,27 @@ class M3dc1 < Formula
     # install_name instead, which is why this only bites on Linux.
     # Skipped deliberately: zoltan and m3dc1_scorec are static archives, and the
     # latter lives in the (temporary) build directory.
-    rpath_libdirs = [pumi, hdf5, fftw, gsl, metis].map { |d| "#{d}/lib" }
+    # Linux only. macOS records an absolute install_name in each library, so the
+    # loader resolves them without any rpath -- and adding them actively breaks
+    # bottling: for a relocatable bottle Homebrew rewrites HOMEBREW_PREFIX to a
+    # longer @@HOMEBREW_PREFIX@@ placeholder inside every LC_RPATH, and with the
+    # entries gfortran already emits there is not enough Mach-O header space
+    # left, so install_name_tool fails ("Failed changing rpath in ...").
+    rpaths = ""
     if OS.linux?
-      rpath_libdirs << "#{openblas}/lib"
+      rpath_libdirs = [pumi, hdf5, fftw, gsl, metis, openblas].map { |d| "#{d}/lib" }
       # gfortran's runtime does not live under <prefix>/lib.
       rpath_libdirs << (formula_opt_prefix("gcc")/"lib/gcc/current").to_s
+      # PETSc switches with COM, so its rpath has to be a make reference.
+      rpaths = "-Wl,-rpath,$(PETSC_PREFIX)/lib " \
+               "#{rpath_libdirs.map { |d| "-Wl,-rpath,#{d}" }.join(" ")}"
     end
-    rpaths = rpath_libdirs.map { |d| "-Wl,-rpath,#{d}" }.join(" ")
-    # PETSc switches with COM, so its rpath has to be a make reference.
-    rpaths = "-Wl,-rpath,$(PETSC_PREFIX)/lib #{rpaths}"
+
+    netcdf_rpaths = if OS.linux?
+      "-Wl,-rpath,#{netcdf}/lib -Wl,-rpath,#{netcdff}/lib"
+    else
+      ""
+    end
 
     (buildpath/"unstructured/brew.mk").write <<~MK
       FOPTS = -c -fdefault-real-8 -fdefault-double-8 -fallow-argument-mismatch \\
@@ -239,8 +251,7 @@ class M3dc1 < Formula
                 -I#{gsl}/include
 
       ifeq ($(ST), 1)
-        LIBS += -L#{netcdf}/lib -lnetcdf -L#{netcdff}/lib -lnetcdff \\
-                -Wl,-rpath,#{netcdf}/lib -Wl,-rpath,#{netcdff}/lib
+        LIBS += -L#{netcdf}/lib -lnetcdf -L#{netcdff}/lib -lnetcdff #{netcdf_rpaths}
         INCLUDE += -I#{netcdf}/include -I#{netcdff}/include
       endif
 
