@@ -12,6 +12,14 @@ class SuperluDist < Formula
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/superlu-dist-9.2.1"
+    sha256 cellar: :any, arm64_tahoe:   "9a6bf6d6d947a2225cdf5d744272971ec9d7037f0e62a984cfc6537b24ecc0db"
+    sha256 cellar: :any, arm64_sequoia: "30941258d884d69a9df8cf0c78704738913a7adababf8c7e02e154267262c9cb"
+    sha256 cellar: :any, arm64_sonoma:  "8b2a3a561817b4b941eac018ffe7699bec2c1070a30651414805f1d659b3ecff"
+    sha256 cellar: :any, x86_64_linux:  "1d5c16afee5ae98fb34e25e1a99e11f44114bea14246b6b5ca5cf76a117f92b9"
+  end
+
   depends_on "cmake" => :build
   depends_on "open-mpi"
 
