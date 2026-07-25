@@ -170,7 +170,8 @@ class Mumps < Formula
       }
     C
     system "mpicc", "test.c", "-I#{include}", "-L#{lib}",
-           "-ldmumps", "-lmumps_common", "-lpord", "-o", "test"
+           "-ldmumps", "-lmumps_common", "-lpord",
+           "-Wl,-rpath,#{lib}", "-o", "test"
     assert_match "1.0000 1.0000", shell_output("mpirun -np 1 ./test")
   end
 end
