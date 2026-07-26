@@ -26,6 +26,64 @@ tap "dgarnier/plasma"
 brew "<formula>"
 ```
 
+## MDSplus
+
+MDSplus is packaged differently from upstream, and the differences matter.
+
+**It is not installed in `/usr/local/mdsplus`.** That is upstream's standard location,
+and MDSplus hardcodes it in a number of places. This formula installs into its Homebrew
+keg instead:
+
+```sh
+brew --prefix mdsplus      # e.g. /opt/homebrew/opt/mdsplus
+```
+
+and rewrites every hardcoded `/usr/local/mdsplus` reference to point there — in
+`setup.sh` / `setup.csh`, the `MDSplus` Python package (`__init__.py`, `version.py`,
+`tree.py`, the `wsgi` handlers and config), `cmake/FindMDSplus.cmake`,
+`macosx/mdsip.plist`, `epics/archiver/Sdd2Mds` and `TreeShrHook.py.example`.
+
+**The formula is deliberately `keg_only`**, i.e. not symlinked into `$(brew --prefix)/bin`.
+That is how MDSplus expects to be used: source its setup script rather than putting it
+on `PATH` piecemeal. Add to your shell profile:
+
+```sh
+if [ -f "$(brew --prefix mdsplus)/setup.sh" ]; then
+  source "$(brew --prefix mdsplus)/setup.sh"
+fi
+```
+
+**Consequence: the install is not portable.** Because absolute paths are baked into
+scripts and Python sources at build time, you cannot copy the tree somewhere else — or
+onto a machine with a different Homebrew prefix — and expect it to work. Install it with
+`brew` on each machine rather than relocating it by hand. (Note the prefix is not
+constant: it is `/opt/homebrew` on Apple Silicon but `/usr/local` on Intel macOS, so
+`brew --prefix mdsplus` is always the reliable way to refer to it.)
+
+### Python bindings
+
+The build also produces a wheel, alongside the importable package:
+
+```sh
+ls "$(brew --prefix mdsplus)/python"
+# MDSplus/  mdsplus-<version>-py3-none-any.whl
+```
+
+Note that sourcing `setup.sh` is **not** enough to `import MDSplus`. It sets the MDSplus
+environment (`MDSPLUS_DIR`, `PATH`, `MDS_PATH`, `IDL_PATH`, and a `PYTHONPATH` entry for
+`pydevices`), but not a `PYTHONPATH` entry for the package itself. Either install the
+wheel — which works in a virtualenv and is the tidier option:
+
+```sh
+pip install "$(brew --prefix mdsplus)"/python/mdsplus-*.whl
+```
+
+or add the directory to `PYTHONPATH` yourself:
+
+```sh
+export PYTHONPATH="$(brew --prefix mdsplus)/python:$PYTHONPATH"
+```
+
 ## The M3D-C1 stack
 
 [M3D-C1](https://github.com/PrincetonUniversity/M3DC1) is a PPPL extended-MHD
