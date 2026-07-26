@@ -4,13 +4,20 @@ class PetscComplexM3dc1 < Formula
   url "https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.25.3.tar.gz"
   sha256 "95ce60df2c7f9c5044d6a544c41e996a512557f91df1a60bdb690b332904ebb5"
   license "BSD-2-Clause"
-  # PETSc's soname is major.minor (libpetsc.3.25.dylib), and it declares each
-  # minor release ABI-incompatible. So dependents survive a PATCH bump
-  # (3.25.3 -> 3.25.4) but not a MINOR one. Declaring that here lets Homebrew
-  # skip rebuilding dependents across patch bumps.
-  # INCREMENT THIS on every PETSc minor bump (3.25 -> 3.26), never on a patch.
-  # Tracks homebrew-core, which did the same 1 -> 2 for its own 3.24 -> 3.25.
-  compatibility_version 1
+  # NOTE: We want `compatibility_version` here. PETSc's soname is major.minor
+  # (libpetsc.3.25.dylib) and it declares each minor release ABI-incompatible,
+  # so dependents survive a PATCH bump (3.25.3 -> 3.25.4) but not a MINOR one;
+  # declaring it lets Homebrew skip rebuilding dependents across patch bumps
+  # (increment on every minor bump 3.25 -> 3.26, never on a patch).
+  #
+  # It is REMOVED for now because Homebrew's `audit_compatibility_version`
+  # (formula_auditor.rb) is unsatisfiable for tap formulae: it credits a
+  # dependent's `revision` bump only if the dependent's recursive_dependencies
+  # include `formula.name` (SHORT), but a tap's dependency names are FULL
+  # ("dgarnier/plasma/..."), so the 0 -> 1 bump always fails CI even with the
+  # matching m3dc1 `revision` bump present. Re-add once upstream compares
+  # against full_name (or guards with core_formula? like the reverse check).
+  # compatibility_version 1
 
   livecheck do
     url "https://web.cels.anl.gov/projects/petsc/download/release-snapshots/"
