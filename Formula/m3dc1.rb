@@ -6,6 +6,7 @@ class M3dc1 < Formula
   version "1.16.dev20260708"
   sha256 "2e414936f7059a5cbc225436855baa6e6fe1354d56656b6c6dacefcc77aca881"
   license "BSD-3-Clause"
+  revision 1
 
   livecheck do
     skip "no tagged upstream releases; pinned to a master commit"
@@ -46,9 +47,12 @@ class M3dc1 < Formula
     depends_on "openblas"
   end
 
-  # PETSC_VERSION as used by the source's preprocessor guards (>= 39 is the
-  # newest branch); 324 tracks the petsc-m3dc1 pair at 3.24.x.
-  PETSC_VERSION_DEFINE = "324".freeze
+  # PETSC_VERSION as used by the source's preprocessor guards. All of them are
+  # lower bounds (>= 36/38/39) with no upper bound -- upstream's own CMakeLists
+  # passes 990 -- so the exact value only needs to exceed 39. Kept accurate to
+  # the petsc-m3dc1 pair (3.25.x) as documentation, and it is the first knob to
+  # try if a future PETSc breaks the build.
+  PETSC_VERSION_DEFINE = "325".freeze
 
   def scorec_cmake_args(complex:)
     petsc = Formula[complex ? "dgarnier/plasma/petsc-complex-m3dc1" : "dgarnier/plasma/petsc-m3dc1"]
