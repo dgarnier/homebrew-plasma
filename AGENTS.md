@@ -87,6 +87,30 @@ passes, so it cannot be overridden. Needs fixing upstream in open-mpi.
 
 ## Formula-specific rules
 
+**Bumping the PETSc pair.** `petsc-m3dc1` and `petsc-complex-m3dc1` must move
+together — they are listed in
+[`synced_versions_formulae.json`](synced_versions_formulae.json), so use:
+
+```sh
+brew bump --open-pr --bump-synced dgarnier/plasma/petsc-m3dc1
+```
+
+PETSc's soname is `major.minor` (`libpetsc.3.25.dylib`) and PETSc declares each minor
+release ABI-incompatible, so:
+
+- **patch** bump (3.25.3 → 3.25.4): soname unchanged, dependents are fine. Leave
+  `compatibility_version` alone and no dependent revision bump is needed.
+- **minor** bump (3.25 → 3.26): the soname changes and every dependent breaks.
+  **Increment `compatibility_version` in both formulae, and bump `revision` on
+  `m3dc1`** in the same PR, or installed copies will point at a library that no longer
+  exists. Also update `PETSC_VERSION_DEFINE` in `m3dc1.rb` (cosmetic — M3D-C1's guards
+  are all lower bounds, upstream's own CMakeLists passes `990` — but keep it accurate).
+
+Do **not** try to give PETSc a major-only soname (`libpetsc.3.dylib`) to avoid this.
+Its ABI genuinely is not stable across minors, and M3D-C1 passes Fortran arrays and
+derived types straight into PETSc, so a mismatch produces wrong numbers rather than a
+clean failure.
+
 **Commit-pinned formulae** (no upstream releases): `fidasim`, `m3dc1`, `fusion-io`.
 They pin a commit, synthesise a version, and `livecheck { skip }`. `brew bump` will not
 help — see the manual bump procedures in [README.md](README.md).

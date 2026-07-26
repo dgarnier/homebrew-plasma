@@ -4,6 +4,13 @@ class PetscM3dc1 < Formula
   url "https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.25.3.tar.gz"
   sha256 "95ce60df2c7f9c5044d6a544c41e996a512557f91df1a60bdb690b332904ebb5"
   license "BSD-2-Clause"
+  # PETSc's soname is major.minor (libpetsc.3.25.dylib), and it declares each
+  # minor release ABI-incompatible. So dependents survive a PATCH bump
+  # (3.25.3 -> 3.25.4) but not a MINOR one. Declaring that here lets Homebrew
+  # skip rebuilding dependents across patch bumps.
+  # INCREMENT THIS on every PETSc minor bump (3.25 -> 3.26), never on a patch.
+  # Tracks homebrew-core, which did the same 1 -> 2 for its own 3.24 -> 3.25.
+  compatibility_version 1
 
   livecheck do
     url "https://web.cels.anl.gov/projects/petsc/download/release-snapshots/"
