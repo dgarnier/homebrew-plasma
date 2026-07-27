@@ -13,11 +13,11 @@ class M3dc1 < Formula
   end
 
   bottle do
-    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/m3dc1-1.16.dev20260708"
-    sha256 cellar: :any, arm64_tahoe:   "08567826ec84b6800b0b2766ed48c7f9118f49413a66d09537f1cb1838586b61"
-    sha256 cellar: :any, arm64_sequoia: "8ad2b3bbe64fd033b946a77e693d98338a41797c2254e1521ec017c7730ea2a9"
-    sha256 cellar: :any, arm64_sonoma:  "61a845270574f81174f2f33a326718339ca7e1d483b37876ae6eb9f8c972c800"
-    sha256 cellar: :any, x86_64_linux:  "dc8313dd8254a7fc211e28eb5f0cc2f8faa904a645072c5419239f4c96eae196"
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/m3dc1-1.16.dev20260708_1"
+    sha256 cellar: :any, arm64_tahoe:   "7256cbeb34fce4b249f872c1560c654322b145dea8f8c22f48914960f64f7064"
+    sha256 cellar: :any, arm64_sequoia: "e450accd0188b84f999d9a2e34a7a66d851b48f86e20b9eddc105b88cab474c4"
+    sha256 cellar: :any, arm64_sonoma:  "d64156764ed5ef32fd91ec0615e6493954765939e14333d5689cfd9435362aea"
+    sha256 cellar: :any, x86_64_linux:  "c692ef7b4c424472b338d31027e243a2e46d0d7efe28bcc87927858fc5b923c2"
   end
 
   # Build with the standard environment rather than superenv. This formula
