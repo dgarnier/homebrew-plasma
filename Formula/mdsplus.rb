@@ -4,6 +4,7 @@ class Mdsplus < Formula
   desc "Data management system"
   homepage "https://mdsplus.org/"
   license "MIT"
+  revision 1
 
   stable do
     url "https://github.com/MDSplus/mdsplus/archive/refs/tags/alpha_release-7-160-2.tar.gz"
@@ -11,6 +12,13 @@ class Mdsplus < Formula
     version "alpha_release-7-160-2"
     sha256 "4d5490a57681e215cd6949d3bb81d63995a6a07efb7d2c8ca71b1e835dc69cee"
     patch :DATA
+
+    # Build a pip-installable "local" wheel into <prefix>/python/wheelhouse.
+    # Remove once https://github.com/MDSplus/mdsplus PR (python-local-wheel) is merged.
+    patch do
+      url "https://github.com/dgarnier/mdsplus/commit/d1ed40daa649042f4b1292ab2509235fe7dca148.patch?full_index=1"
+      sha256 "7e2bb8e85a6b9c10343e0c1ba30a72dfef38bee5fc6341efe70e9772e949a5a6"
+    end
   end
 
   livecheck do
@@ -31,6 +39,12 @@ class Mdsplus < Formula
   head do
     url "https://github.com/MDSplus/mdsplus.git", using: :git, branch: "alpha"
     patch :DATA
+
+    # Local wheel feature; remove once merged into alpha.
+    patch do
+      url "https://github.com/dgarnier/mdsplus/commit/d1ed40daa649042f4b1292ab2509235fe7dca148.patch?full_index=1"
+      sha256 "7e2bb8e85a6b9c10343e0c1ba30a72dfef38bee5fc6341efe70e9772e949a5a6"
+    end
   end
 
   keg_only "its the normal way to have mdsplus work"
@@ -82,6 +96,7 @@ class Mdsplus < Formula
       -B workspace/build
       -G Ninja
       -DCMAKE_INSTALL_PREFIX=#{prefix}
+      -DENABLE_PYTHON_LOCAL_WHEEL=ON
     ]
 
     args += if OS.mac?
@@ -149,7 +164,8 @@ class Mdsplus < Formula
       "epics/archiver/Sdd2Mds",
       "cmake/FindMDSplus.cmake",
       "macosx/mdsip.plist",
-      "tdi/treeshr/TreeShrHook.py.example"
+      "tdi/treeshr/TreeShrHook.py.example",
+      "python/local_wheel/README.md"
     ], "/usr/local/mdsplus", opt_prefix
 
     virtualenv_create(buildpath/"workspace/venv", "python3.13")
@@ -188,14 +204,9 @@ class Mdsplus < Formula
       rm prefix/"python/MDSplus/tests/CMakeLists.txt"
     end
 
-    # build python wheel
-    # build_venv = virtualenv_create(buildpath/"venv", "python3.13")
-    # build_venv.pip_install "wheel"
-    # ENV.prepend_path "PATH", buildpath/"venv/bin"
-    system "python3", "-m", "pip", "wheel", "--no-deps",
-      "-w", prefix/"python", prefix/"python/MDSplus"
-    # clean up
-    rm_r [prefix/"python/MDSplus/build", prefix/"python/MDSplus/MDSplus.egg-info"]
+    # the "local" redirect wheel is built into #{prefix}/python/wheelhouse
+    # at install time by ENABLE_PYTHON_LOCAL_WHEEL (gen_wheel.cmake)
+    odie "local wheel missing from wheelhouse" if Dir[prefix/"python/wheelhouse/*.whl"].empty?
   end
 
   def caveats
@@ -209,6 +220,12 @@ class Mdsplus < Formula
           source #{opt_prefix}/setup.sh
         fi
 
+      To use the MDSplus python package in a venv/uv environment:
+
+        pip install --find-links #{opt_prefix}/python/wheelhouse MDSplus
+
+      (see #{opt_prefix}/python/wheelhouse/README.md)
+
       Brew will now tell you about the un-recommended way to add mdsplus to your paths.
       It has opinions.  They aren't great ones.
     EOS
@@ -219,15 +236,17 @@ class Mdsplus < Formula
     # `test do` will create, run in and delete a temporary directory.
 
     # setup python
-    test_venv = virtualenv_create(testpath/"venv", "python3.13")
+    test_venv = virtualenv_create(testpath/"venv", formula_opt_bin("python@3.13")/"python3.13")
     ENV.prepend_path "PATH", testpath/"venv/bin"
     # get actual python library with full path
     test_venv.pip_install "find_libpython"
     # image library
     # don't enable for now because python image handling appears broken
     # test_venv.pip_install "pillow"
-    wheel = Dir[opt_prefix/"python/*.whl"].first
-    system "python3", "-m", "pip", "install", wheel
+    system "python3", "-m", "pip", "install",
+      "--find-links", opt_prefix/"python/wheelhouse", "MDSplus"
+    # make sure pip installed the local redirect wheel and not something else
+    assert_path_exists testpath/"venv/lib/python3.13/site-packages/MDSplus.pth"
 
     # setup MDSplus environment
     ENV["MDSPLUS_DIR"]=opt_prefix
@@ -258,8 +277,13 @@ class Mdsplus < Formula
     ohai "tditest passed"
 
     output = pipe_output("python3", "from MDSplus._version import release_tag; print(release_tag)").chomp
-    assert_equal version.to_s, output
-    ohai "Python loaded expected MDSplus version: #{output}"
+    if head?
+      # HEAD kegs are versioned "HEAD-<sha>" but MDSplus reports its latest release tag
+      refute_empty output
+    else
+      assert_equal version.to_s, output
+    end
+    ohai "Python loaded MDSplus reporting version: #{output}"
 
     output = pipe_output("python3", "exec(\"try: import MDSplus.test; print('OK')\\nexcept: print('FAIL')\")")
     if output.include? "OK"
