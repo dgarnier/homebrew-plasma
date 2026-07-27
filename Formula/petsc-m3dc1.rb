@@ -25,11 +25,11 @@ class PetscM3dc1 < Formula
   end
 
   bottle do
-    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/petsc-m3dc1-3.24.6"
-    sha256 arm64_tahoe:   "704463f81853fdc2baf85eed886c9e33d56c1a1f0a3921743b2a98dad1c37973"
-    sha256 arm64_sequoia: "293d720a5a2b715274e2c42ef2f6d25a3ec0d19f75b65674dc5307824a1c7160"
-    sha256 arm64_sonoma:  "87b066f9ee5d16bde92104e1b17b5773aee6f0a6abab78dbaa7cfa718b7f068b"
-    sha256 x86_64_linux:  "2a312c903566a5fcb68eb328dc07f73e0a942f0e222699ff91832ba5969e0a87"
+    root_url "https://github.com/dgarnier/homebrew-plasma/releases/download/petsc-m3dc1-3.25.3"
+    sha256 arm64_tahoe:   "524329086e2ebd3530b51468c35e6663b4f4c301ac2093e43953eb1e7ca6f246"
+    sha256 arm64_sequoia: "ef76768e4a24ec84db5c5937614c9b2fc0726eb0a0aaad8d5a83272ae24db274"
+    sha256 arm64_sonoma:  "30a5ba72f987523ec7fdef6d1d29ee340cbc72c5dc12593a3c1e8003d098b8f5"
+    sha256 x86_64_linux:  "ebd522bad6b9d0d9a4a985ee493e5a45992c7d5a49f46723d0ca2d53c0506919"
   end
 
   # Unlike homebrew-core's petsc/petsc-complex, this build includes the
